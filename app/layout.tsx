@@ -6,7 +6,9 @@ export const metadata: Metadata = {
   title: "ZAMAPAY",
   description: "Send privately. Prove selectively.",
   icons: {
-    icon: "/icon.svg"
+    icon: "/zamapay-logo.jpg",
+    shortcut: "/zamapay-logo.jpg",
+    apple: "/zamapay-logo.jpg"
   }
 };
 
