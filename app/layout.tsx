@@ -4,7 +4,10 @@ import Navbar from "@/components/Navbar";
 
 export const metadata: Metadata = {
   title: "ZAMAPAY",
-  description: "Send privately. Prove selectively."
+  description: "Send privately. Prove selectively.",
+  icons: {
+    icon: "/icon.svg"
+  }
 };
 
 export default function RootLayout({

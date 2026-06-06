@@ -44,6 +44,28 @@ export function getSelectedNetwork() {
   return NETWORKS[getSelectedNetworkKey()];
 }
 
+export function getSelectedContractAddress() {
+  return getSelectedNetwork().contractAddress;
+}
+
+export function isConfiguredContractAddress(address: string) {
+  return /^0x[a-fA-F0-9]{40}$/.test(address) && !/^0x0{40}$/i.test(address);
+}
+
+export function assertConfiguredContractAddress() {
+  const network = getSelectedNetwork();
+
+  if (!isConfiguredContractAddress(network.contractAddress)) {
+    throw new Error(
+      `ZAMAPAY contract address is missing for ${network.name}. Set ${
+        getSelectedNetworkKey() === "sepolia"
+          ? "NEXT_PUBLIC_ZAMAPAY_CONTRACT_SEPOLIA"
+          : "NEXT_PUBLIC_ZAMAPAY_CONTRACT_MAINNET"
+      } to the deployed contract address.`
+    );
+  }
+}
+
 export async function switchToNetwork(networkKey: NetworkKey) {
   if (!window.ethereum) {
     throw new Error("MetaMask is required.");
@@ -110,5 +132,6 @@ export async function connectWallet() {
 }
 
 export function getZamapayContract(signerOrProvider: JsonRpcSigner | BrowserProvider) {
-  return new Contract(getSelectedNetwork().contractAddress, ZAMAPAY_ABI, signerOrProvider);
+  assertConfiguredContractAddress();
+  return new Contract(getSelectedContractAddress(), ZAMAPAY_ABI, signerOrProvider);
 }

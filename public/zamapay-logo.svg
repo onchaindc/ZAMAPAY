@@ -1,0 +1,36 @@
+<svg width="1200" height="420" viewBox="0 0 1200 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="420" fill="#05070d"/>
+  <g filter="url(#glow)">
+    <path d="M530 42H795C818 42 830 70 814 87L675 226C663 238 647 245 630 245H390C367 245 355 217 371 200L510 61C522 49 538 42 555 42H530Z" fill="url(#gold1)"/>
+    <path d="M390 245H630C647 245 663 238 675 226L814 87C830 70 818 42 795 42H753L612 183C600 195 584 202 567 202H327C304 202 292 174 308 157L447 18C459 6 475 -1 492 -1H733" fill="url(#gold2)" opacity="0.92"/>
+    <path d="M298 294H760L711 344C699 356 683 363 666 363H260C237 363 225 335 241 318L298 294Z" fill="url(#gold3)"/>
+  </g>
+  <g filter="url(#wordGlow)">
+    <text x="74" y="286" fill="white" font-family="Inter, Arial, sans-serif" font-size="126" font-weight="800" letter-spacing="-6">zama</text>
+    <text x="538" y="286" fill="#facc15" font-family="Inter, Arial, sans-serif" font-size="126" font-weight="800" letter-spacing="-6">pay</text>
+    <text x="262" y="354" fill="#facc15" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="700" letter-spacing="16">CONFIDENTIAL PAYMENTS. SECURED BY FHE.</text>
+  </g>
+  <defs>
+    <filter id="glow" x="170" y="-80" width="760" height="560" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="18" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0.98 0 1 0 0 0.8 0 0 1 0 0.05 0 0 0 0.75 0"/>
+      <feBlend in="SourceGraphic"/>
+    </filter>
+    <filter id="wordGlow" x="40" y="150" width="940" height="240" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#ffffff" flood-opacity="0.35"/>
+    </filter>
+    <linearGradient id="gold1" x1="378" y1="54" x2="785" y2="250" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff173"/>
+      <stop offset="0.5" stop-color="#facc15"/>
+      <stop offset="1" stop-color="#c79500"/>
+    </linearGradient>
+    <linearGradient id="gold2" x1="342" y1="54" x2="760" y2="242" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffe600"/>
+      <stop offset="1" stop-color="#d6a400"/>
+    </linearGradient>
+    <linearGradient id="gold3" x1="238" y1="292" x2="754" y2="356" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffe600"/>
+      <stop offset="1" stop-color="#facc15"/>
+    </linearGradient>
+  </defs>
+</svg>
