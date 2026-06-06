@@ -1,5 +1,3 @@
-import { createInstance } from "@zama-fhe/relayer-sdk/web";
-
 type FhevmInstance = {
   encrypt64: (value: bigint | number | string) => Promise<unknown> | unknown;
   decrypt: (ciphertext: unknown) => Promise<unknown>;
@@ -13,6 +11,8 @@ export async function getFhevmInstance() {
   if (!window.ethereum) {
     throw new Error("MetaMask is required.");
   }
+
+  const { createInstance } = await import("@zama-fhe/relayer-sdk/web");
 
   instance = (await createInstance({
     aclContractAddress: "0x687820221192C5B662b25367F70076A37bc79b6c",
