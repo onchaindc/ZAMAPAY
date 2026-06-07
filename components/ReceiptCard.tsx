@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { getFhevmInstance } from "@/lib/fhevm";
-import { truncateAddress } from "@/lib/contract";
+import { userDecryptHandle } from "@/lib/fhevm";
+import { connectWallet, getSelectedContractAddress, truncateAddress } from "@/lib/contract";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Toast from "@/components/Toast";
 
@@ -30,8 +30,9 @@ export default function ReceiptCard({ receipt }: ReceiptCardProps) {
     setTone("idle");
 
     try {
-      const fhevm = await getFhevmInstance();
-      const value = await fhevm.decrypt(receipt.encryptedAmount);
+      const wallet = await connectWallet();
+      const contractAddress = getSelectedContractAddress();
+      const value = await userDecryptHandle(contractAddress, wallet.address, receipt.encryptedAmount, wallet.signer);
       setAmount(value?.toString?.() ?? String(value));
       setToast("Amount revealed locally.");
       setTone("success");
