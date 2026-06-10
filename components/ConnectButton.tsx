@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { connectWallet, hasMetaMask, truncateAddress } from "@/lib/contract";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { getFriendlyErrorMessage } from "@/lib/ui";
 
 type ConnectButtonProps = {
   compact?: boolean;
@@ -60,7 +61,7 @@ export default function ConnectButton({ compact = false, onConnected }: ConnectB
       setAddress(wallet.address);
       onConnected?.(wallet.address);
     } catch (connectError) {
-      setError(connectError instanceof Error ? connectError.message : "Wallet connection failed.");
+      setError(getFriendlyErrorMessage(connectError, "network"));
     } finally {
       setLoading(false);
     }
@@ -72,12 +73,12 @@ export default function ConnectButton({ compact = false, onConnected }: ConnectB
         type="button"
         onClick={handleConnect}
         disabled={loading}
-        className={`primary-button ${compact ? "px-3 text-sm" : "px-5"}`}
+        className={`primary-button ${compact ? "w-auto px-3 text-sm" : "px-5"}`}
       >
         {loading ? <LoadingSpinner className="mr-2" /> : null}
         {address ? truncateAddress(address) : "Connect Wallet"}
       </button>
-      {error ? <p className="max-w-52 text-xs text-rose-200">{error}</p> : null}
+      {error ? <p className="status-text max-w-52 text-xs text-rose-300">{error}</p> : null}
     </div>
   );
 }

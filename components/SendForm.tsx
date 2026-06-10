@@ -6,6 +6,7 @@ import { connectWallet, getSelectedContractAddress, getZamapayContract, truncate
 import { encryptAmount64 } from "@/lib/fhevm";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Toast from "@/components/Toast";
+import { getFriendlyErrorMessage } from "@/lib/ui";
 
 type SendFormProps = {
   compact?: boolean;
@@ -56,7 +57,7 @@ export default function SendForm({ compact = false }: SendFormProps) {
       setRecipient("");
       setAmount("");
     } catch (error) {
-      setToast(error instanceof Error ? error.message : "Transfer failed.");
+      setToast(getFriendlyErrorMessage(error, "contract"));
       setTone("error");
     } finally {
       setLoading(false);
@@ -64,10 +65,10 @@ export default function SendForm({ compact = false }: SendFormProps) {
   }
 
   return (
-    <section className={`glass rounded-lg ${compact ? "p-5" : "p-5 sm:p-6"}`}>
+    <section className={`glass rounded-xl ${compact ? "p-4 sm:p-6" : "p-4 sm:p-6"}`}>
       <div className="mb-5">
-        <p className="text-sm font-semibold uppercase tracking-normal text-zama-soft">Private Transfer</p>
-        <h2 className="mt-2 text-2xl font-black text-white">Send encrypted tokens</h2>
+        <p className="text-xs font-semibold uppercase tracking-normal text-zama-soft sm:text-sm">Private Transfer</p>
+        <h2 className="mt-2 text-xl font-black text-white sm:text-2xl">Send encrypted tokens</h2>
       </div>
 
       <div className="grid gap-4">
@@ -95,15 +96,15 @@ export default function SendForm({ compact = false }: SendFormProps) {
         <button
           type="button"
           onClick={() => setGenerateReceipt((current) => !current)}
-          className="flex items-center justify-between rounded-lg border border-zama-gold/25 bg-white/5 px-4 py-3 text-left"
+          className="flex items-center justify-between rounded-xl border border-zama-gold/25 bg-white/5 px-4 py-3 text-left"
           aria-pressed={generateReceipt}
         >
-          <span>
+          <span className="min-w-0">
             <span className="block font-semibold text-white">Generate receipt</span>
-            <span className="text-sm text-zinc-400">Authorized parties can reveal the amount later.</span>
+            <span className="block text-sm text-zinc-400">Authorized parties can reveal the amount later.</span>
           </span>
           <span
-            className={`flex h-7 w-12 items-center rounded-full p-1 transition ${
+            className={`ml-4 flex h-7 w-12 shrink-0 items-center rounded-full p-1 transition ${
               generateReceipt ? "bg-zama-gold" : "bg-white/12"
             }`}
           >
@@ -115,13 +116,13 @@ export default function SendForm({ compact = false }: SendFormProps) {
           </span>
         </button>
 
-        <button type="button" onClick={submitTransfer} disabled={loading} className="primary-button w-full">
+        <button type="button" onClick={submitTransfer} disabled={loading} className="primary-button sm:w-auto">
           {loading ? <LoadingSpinner className="mr-2" /> : null}
           Submit Transfer
         </button>
       </div>
 
-      <div className="mt-5">
+      <div className="mt-4">
         <Toast message={toast} tone={tone} />
       </div>
     </section>

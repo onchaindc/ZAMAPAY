@@ -4,6 +4,7 @@ import { useState } from "react";
 import { connectWallet, getZamapayContract, truncateAddress } from "@/lib/contract";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Toast from "@/components/Toast";
+import { getFriendlyErrorMessage } from "@/lib/ui";
 
 export default function FaucetPage() {
   const [amount, setAmount] = useState("100");
@@ -33,7 +34,7 @@ export default function FaucetPage() {
       setToast("Test tokens minted.");
       setTone("success");
     } catch (error) {
-      setToast(error instanceof Error ? error.message : "Mint failed.");
+      setToast(getFriendlyErrorMessage(error, "contract"));
       setTone("error");
     } finally {
       setLoading(false);
@@ -41,13 +42,13 @@ export default function FaucetPage() {
   }
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mb-7">
-        <p className="text-sm font-bold uppercase tracking-normal text-zama-soft">Faucet</p>
-        <h1 className="mt-2 text-3xl font-black text-white sm:text-4xl">Get Sepolia test tokens</h1>
+    <main className="mx-auto max-w-[1200px] px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mb-6">
+        <p className="text-xs font-bold uppercase tracking-normal text-zama-soft sm:text-sm">Faucet</p>
+        <h1 className="mt-2 text-2xl font-black text-white sm:text-4xl">Get Sepolia test tokens</h1>
       </div>
 
-      <section className="glass rounded-lg p-5 sm:p-6">
+      <section className="glass rounded-xl p-4 sm:p-6">
         <div className="grid gap-4">
           <label className="grid gap-2 text-sm font-semibold text-white">
             Amount
@@ -59,13 +60,13 @@ export default function FaucetPage() {
             />
           </label>
 
-          <button type="button" onClick={mintTokens} disabled={loading} className="primary-button w-full">
+          <button type="button" onClick={mintTokens} disabled={loading} className="primary-button sm:w-auto">
             {loading ? <LoadingSpinner className="mr-2" /> : null}
             Get Test Tokens
           </button>
         </div>
 
-        <div className="mt-5">
+        <div className="mt-4">
           <Toast message={toast} tone={tone} />
         </div>
       </section>

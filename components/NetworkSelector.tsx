@@ -1,8 +1,9 @@
 "use client";
 
+import { BrowserProvider } from "ethers";
 import { useEffect, useState } from "react";
 import { DEFAULT_NETWORK, NETWORKS, NetworkKey } from "@/lib/constants";
-import { getSelectedNetworkKey, switchToNetwork } from "@/lib/contract";
+import { getSelectedNetworkKey, setSelectedNetworkKey, switchToNetwork } from "@/lib/contract";
 import { resetInstance } from "@/lib/fhevm";
 
 export default function NetworkSelector() {
@@ -10,7 +11,41 @@ export default function NetworkSelector() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setNetworkKey(getSelectedNetworkKey());
+    let mounted = true;
+
+    async function syncNetworkFromWallet() {
+      if (!window.ethereum) {
+        if (mounted) {
+          setNetworkKey(getSelectedNetworkKey());
+        }
+        return;
+      }
+
+      const provider = new BrowserProvider(window.ethereum);
+      const network = await provider.getNetwork();
+      const matchedEntry = Object.entries(NETWORKS).find(([, value]) => BigInt(value.chainId) === network.chainId);
+      const nextKey = (matchedEntry?.[0] as NetworkKey | undefined) ?? getSelectedNetworkKey();
+
+      if (mounted) {
+        setNetworkKey(nextKey);
+      }
+
+      setSelectedNetworkKey(nextKey);
+    }
+
+    void syncNetworkFromWallet();
+
+    const handleChainChanged = () => {
+      void syncNetworkFromWallet();
+      resetInstance();
+    };
+
+    window.ethereum?.on?.("chainChanged", handleChainChanged);
+
+    return () => {
+      mounted = false;
+      window.ethereum?.removeListener?.("chainChanged", handleChainChanged);
+    };
   }, []);
 
   async function handleNetworkChange(nextNetwork: NetworkKey) {
@@ -32,7 +67,7 @@ export default function NetworkSelector() {
         value={networkKey}
         disabled={loading}
         onChange={(event) => handleNetworkChange(event.target.value as NetworkKey)}
-        className="h-11 rounded-lg border border-zama-gold/25 bg-white/8 px-3 text-sm font-bold text-white outline-none transition hover:border-zama-gold/55 focus:border-zama-gold"
+        className="h-11 rounded-xl border border-white/10 bg-white/5 px-3 text-sm font-bold text-white outline-none transition hover:border-zama-gold/55 focus:border-zama-gold"
       >
         {Object.entries(NETWORKS).map(([key, network]) => (
           <option key={key} value={key} className="bg-midnight text-white">

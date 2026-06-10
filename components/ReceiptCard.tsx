@@ -5,6 +5,7 @@ import { userDecryptHandle } from "@/lib/fhevm";
 import { connectWallet, getSelectedContractAddress, truncateAddress } from "@/lib/contract";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Toast from "@/components/Toast";
+import { getFriendlyErrorMessage } from "@/lib/ui";
 
 export type ReceiptView = {
   id: string;
@@ -26,7 +27,7 @@ export default function ReceiptCard({ receipt }: ReceiptCardProps) {
 
   async function revealAmount() {
     setLoading(true);
-    setToast("Decrypting receipt amount...");
+    setToast("");
     setTone("idle");
 
     try {
@@ -37,7 +38,7 @@ export default function ReceiptCard({ receipt }: ReceiptCardProps) {
       setToast("Amount revealed locally.");
       setTone("success");
     } catch (error) {
-      setToast(error instanceof Error ? error.message : "Could not reveal receipt amount.");
+      setToast(getFriendlyErrorMessage(error, "network"));
       setTone("error");
     } finally {
       setLoading(false);
@@ -45,29 +46,27 @@ export default function ReceiptCard({ receipt }: ReceiptCardProps) {
   }
 
   return (
-    <article className="glass rounded-lg p-5">
+    <article className="glass rounded-xl p-4 sm:p-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <p className="truncate text-xs font-semibold uppercase tracking-normal text-zama-soft">
-            {receipt.id}
-          </p>
+          <p className="truncate text-xs font-semibold uppercase tracking-normal text-zama-soft">{receipt.id}</p>
           <div className="mt-3 grid gap-2 text-sm text-zinc-300">
-            <p>
+            <p className="status-text">
               Sender <span className="font-semibold text-white">{truncateAddress(receipt.sender)}</span>
             </p>
-            <p>
+            <p className="status-text">
               Receiver <span className="font-semibold text-white">{truncateAddress(receipt.receiver)}</span>
             </p>
             <p>{new Date(receipt.timestamp * 1000).toLocaleString()}</p>
           </div>
         </div>
         <div className="text-left sm:text-right">
-          <p className="text-2xl font-black text-white">{amount || "••••"}</p>
-          <p className="text-xs font-semibold text-zinc-400">ZAMA</p>
+          <p className="text-2xl font-black text-white">{amount || "\u2022\u2022\u2022\u2022"}</p>
+          <p className="text-xs font-semibold text-zinc-400">ZPAY</p>
         </div>
       </div>
 
-      <button type="button" onClick={revealAmount} disabled={loading} className="secondary-button mt-5 w-full">
+      <button type="button" onClick={revealAmount} disabled={loading} className="secondary-button mt-5 sm:w-auto">
         {loading ? <LoadingSpinner className="mr-2" /> : null}
         Reveal Amount
       </button>
