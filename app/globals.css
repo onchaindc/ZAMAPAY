@@ -5,6 +5,12 @@
 :root {
   color-scheme: dark;
   background: #05070d;
+  --ui-radius-card: 20px;
+  --ui-radius-panel: 24px;
+  --ui-radius-control: 12px;
+  --ui-shadow-soft: 0 24px 72px rgba(0, 0, 0, 0.28);
+  --ui-shadow-strong: 0 28px 90px rgba(0, 0, 0, 0.34);
+  --ui-transition-fast: 180ms ease;
 }
 
 * {
@@ -58,7 +64,8 @@ button:disabled {
   .glass {
     border: 1px solid rgba(255, 255, 255, 0.08);
     background: rgba(13, 15, 20, 0.96);
-    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+    border-radius: var(--ui-radius-card);
+    box-shadow: var(--ui-shadow-soft);
     backdrop-filter: blur(18px);
   }
 
@@ -112,10 +119,10 @@ button:disabled {
     max-height: calc(100vh - 8rem);
     overflow-y: auto;
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
+    border-radius: 18px;
     background: rgba(13, 15, 20, 0.98);
     padding: 0.5rem;
-    box-shadow: 0 28px 90px rgba(0, 0, 0, 0.42);
+    box-shadow: var(--ui-shadow-strong);
     backdrop-filter: blur(20px);
   }
 
@@ -137,17 +144,18 @@ button:disabled {
     min-height: 2.75rem;
     align-items: center;
     gap: 0.75rem;
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 0 0.85rem;
     color: rgb(212 212 216);
     font-size: 0.925rem;
     font-weight: 700;
-    transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+    transition: background var(--ui-transition-fast), color var(--ui-transition-fast), transform var(--ui-transition-fast), border-color var(--ui-transition-fast);
   }
 
   .sidebar-link:hover {
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.08);
     color: #fffdf0;
+    transform: translateY(-1px);
   }
 
   .sidebar-link-active {
@@ -176,8 +184,8 @@ button:disabled {
   }
 
   .sidebar-icon svg {
-    height: 1.15rem;
-    width: 1.15rem;
+    height: 1.1rem;
+    width: 1.1rem;
     fill: currentColor;
   }
 
@@ -188,16 +196,17 @@ button:disabled {
     flex: 0 0 2.75rem;
     align-items: center;
     justify-content: center;
-    border-radius: 10px;
+    border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(255, 255, 255, 0.05);
     color: #fffdf0;
-    transition: border-color 180ms ease, background 180ms ease;
+    transition: border-color var(--ui-transition-fast), background var(--ui-transition-fast), transform var(--ui-transition-fast);
   }
 
   .icon-button:hover {
     border-color: rgba(250, 204, 21, 0.45);
     background: rgba(250, 204, 21, 0.1);
+    transform: translateY(-1px);
   }
 
   .network-select {
@@ -211,12 +220,13 @@ button:disabled {
     font-size: 0.8rem;
     font-weight: 700;
     outline: none;
-    transition: border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
+    transition: border-color var(--ui-transition-fast), background var(--ui-transition-fast), box-shadow var(--ui-transition-fast), transform var(--ui-transition-fast);
   }
 
   .network-select:hover {
     border-color: rgba(250, 204, 21, 0.45);
     background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-1px);
   }
 
   .network-select:focus {
@@ -242,13 +252,13 @@ button:disabled {
     position: relative;
     overflow: hidden;
     border: 1px solid rgba(250, 204, 21, 0.18);
-    border-radius: 24px;
+    border-radius: var(--ui-radius-panel);
     background:
       linear-gradient(135deg, rgba(250, 204, 21, 0.12), transparent 38%),
       radial-gradient(circle at 84% 10%, rgba(255, 255, 255, 0.12), transparent 24rem),
       rgba(13, 15, 20, 0.98);
     padding: 1.25rem;
-    box-shadow: 0 30px 100px rgba(0, 0, 0, 0.36);
+    box-shadow: var(--ui-shadow-strong);
   }
 
   .balance-hero-glow {
@@ -305,7 +315,7 @@ button:disabled {
     padding: 0.8rem 1.1rem;
     color: #fffdf0;
     font-weight: 800;
-    transition: border-color 180ms ease, background 180ms ease, transform 180ms ease, opacity 180ms ease;
+    transition: border-color var(--ui-transition-fast), background var(--ui-transition-fast), transform var(--ui-transition-fast), opacity var(--ui-transition-fast);
   }
 
   .balance-reveal-button:hover:not(:disabled) {
@@ -317,7 +327,7 @@ button:disabled {
   .balance-skeleton {
     height: 4.75rem;
     max-width: 24rem;
-    border-radius: 18px;
+    border-radius: 16px;
     background: linear-gradient(90deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.06));
     background-size: 220% 100%;
     animation: balance-skeleton 1.25s ease-in-out infinite;
@@ -331,13 +341,15 @@ button:disabled {
     border: 1px solid rgba(255, 255, 255, 0.08);
     background: rgba(255, 255, 255, 0.045);
     padding: 1rem;
-    transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+    transition: border-color var(--ui-transition-fast), background var(--ui-transition-fast), transform var(--ui-transition-fast), box-shadow var(--ui-transition-fast);
   }
 
   .dashboard-action-card:hover {
     border-color: rgba(250, 204, 21, 0.32);
     background: rgba(255, 255, 255, 0.07);
     transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
   }
 
   .dashboard-action-icon {
@@ -352,23 +364,23 @@ button:disabled {
   }
 
   .dashboard-action-icon svg {
-    height: 1.2rem;
-    width: 1.2rem;
+    height: 1.1rem;
+    width: 1.1rem;
     fill: currentColor;
   }
 
   .send-surface {
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 24px;
+    border-radius: var(--ui-radius-panel);
     background:
       radial-gradient(circle at 100% 0%, rgba(250, 204, 21, 0.08), transparent 20rem),
       rgba(13, 15, 20, 0.98);
-    box-shadow: 0 30px 100px rgba(0, 0, 0, 0.32);
+    box-shadow: var(--ui-shadow-strong);
   }
 
   .send-input-group {
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 20px;
+    border-radius: var(--ui-radius-card);
     background: rgba(255, 255, 255, 0.04);
     padding: 1rem;
   }
@@ -407,23 +419,24 @@ button:disabled {
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    border-radius: 20px;
+    border-radius: var(--ui-radius-card);
     border: 1px solid rgba(250, 204, 21, 0.2);
     background: rgba(255, 255, 255, 0.045);
     padding: 1rem;
     text-align: left;
-    transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+    transition: border-color var(--ui-transition-fast), background var(--ui-transition-fast), transform var(--ui-transition-fast), box-shadow var(--ui-transition-fast);
   }
 
   .send-receipt-toggle:hover {
     border-color: rgba(250, 204, 21, 0.42);
     background: rgba(255, 255, 255, 0.065);
     transform: translateY(-1px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
   }
 
   .send-summary-panel {
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 20px;
+    border-radius: var(--ui-radius-card);
     background: rgba(255, 255, 255, 0.035);
     padding: 1rem;
   }
@@ -472,7 +485,7 @@ button:disabled {
   .send-progress-card,
   .send-success-card {
     margin-top: 1.5rem;
-    border-radius: 18px;
+    border-radius: 16px;
     padding: 1rem;
   }
 
@@ -590,7 +603,7 @@ button:disabled {
 
   .activity-amount-panel {
     min-width: min(100%, 13rem);
-    border-radius: 18px;
+    border-radius: 16px;
     border: 1px solid rgba(255, 255, 255, 0.08);
     background: rgba(255, 255, 255, 0.03);
     padding: 1rem;
@@ -687,6 +700,13 @@ button:disabled {
   .status-text {
     overflow-wrap: anywhere;
     word-break: break-word;
+  }
+
+  .surface-toast {
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.035);
+    padding: 0.85rem 1rem;
   }
 }
 

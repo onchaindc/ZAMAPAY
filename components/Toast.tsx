@@ -18,7 +18,7 @@ export default function Toast({ message, tone = "idle" }: ToastProps) {
         : "text-zinc-400";
 
   return (
-    <p className={`status-text text-sm ${toneClass}`} role="status">
+    <p className={`surface-toast status-text text-sm ${toneClass}`} role="status">
       {message}
     </p>
   );
