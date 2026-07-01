@@ -44,6 +44,13 @@ export function getSelectedNetwork() {
   return NETWORKS[getSelectedNetworkKey()];
 }
 
+export function getNetworkKeyForChainId(chainId: bigint | number) {
+  const normalizedChainId = typeof chainId === "bigint" ? chainId : BigInt(chainId);
+  const matchedEntry = Object.entries(NETWORKS).find(([, value]) => BigInt(value.chainId) === normalizedChainId);
+
+  return (matchedEntry?.[0] as NetworkKey | undefined) ?? null;
+}
+
 export function getSelectedContractAddress() {
   return getSelectedNetwork().contractAddress;
 }
@@ -110,6 +117,16 @@ export async function getBrowserProvider() {
 
   const provider = new BrowserProvider(window.ethereum);
   const network = await provider.getNetwork();
+  const walletNetworkKey = getNetworkKeyForChainId(network.chainId);
+
+  if (walletNetworkKey) {
+    const selectedNetworkKey = getSelectedNetworkKey();
+
+    if (walletNetworkKey !== selectedNetworkKey) {
+      setSelectedNetworkKey(walletNetworkKey);
+    }
+  }
+
   const selectedNetwork = getSelectedNetwork();
 
   if (network.chainId !== BigInt(selectedNetwork.chainId)) {
@@ -143,7 +160,11 @@ export async function getConnectedNetworkName() {
 
   const provider = new BrowserProvider(window.ethereum);
   const network = await provider.getNetwork();
-  const matched = Object.values(NETWORKS).find((candidate) => BigInt(candidate.chainId) === network.chainId);
+  const matchedKey = getNetworkKeyForChainId(network.chainId);
 
-  return matched?.name ?? getSelectedNetwork().name;
+  if (matchedKey) {
+    setSelectedNetworkKey(matchedKey);
+  }
+
+  return matchedKey ? NETWORKS[matchedKey].name : getSelectedNetwork().name;
 }

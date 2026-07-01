@@ -3,7 +3,7 @@
 import { BrowserProvider } from "ethers";
 import { useEffect, useState } from "react";
 import { DEFAULT_NETWORK, NETWORKS, NetworkKey } from "@/lib/constants";
-import { getSelectedNetworkKey, setSelectedNetworkKey, switchToNetwork } from "@/lib/contract";
+import { getNetworkKeyForChainId, getSelectedNetworkKey, setSelectedNetworkKey, switchToNetwork } from "@/lib/contract";
 import { resetInstance } from "@/lib/fhevm";
 
 export default function NetworkSelector() {
@@ -23,8 +23,7 @@ export default function NetworkSelector() {
 
       const provider = new BrowserProvider(window.ethereum);
       const network = await provider.getNetwork();
-      const matchedEntry = Object.entries(NETWORKS).find(([, value]) => BigInt(value.chainId) === network.chainId);
-      const nextKey = (matchedEntry?.[0] as NetworkKey | undefined) ?? getSelectedNetworkKey();
+      const nextKey = getNetworkKeyForChainId(network.chainId) ?? getSelectedNetworkKey();
 
       if (mounted) {
         setNetworkKey(nextKey);
