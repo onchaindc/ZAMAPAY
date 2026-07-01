@@ -221,6 +221,124 @@ button:disabled {
     white-space: nowrap;
   }
 
+  .balance-hero {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(250, 204, 21, 0.18);
+    border-radius: 24px;
+    background:
+      linear-gradient(135deg, rgba(250, 204, 21, 0.12), transparent 38%),
+      radial-gradient(circle at 84% 10%, rgba(255, 255, 255, 0.12), transparent 24rem),
+      rgba(13, 15, 20, 0.98);
+    padding: 1.25rem;
+    box-shadow: 0 30px 100px rgba(0, 0, 0, 0.36);
+  }
+
+  .balance-hero-glow {
+    position: absolute;
+    right: -5rem;
+    top: -6rem;
+    height: 18rem;
+    width: 18rem;
+    border-radius: 999px;
+    background: rgba(250, 204, 21, 0.14);
+    filter: blur(24px);
+  }
+
+  .balance-shield {
+    display: grid;
+    height: 2.5rem;
+    width: 2.5rem;
+    place-items: center;
+    border-radius: 14px;
+    border: 1px solid rgba(250, 204, 21, 0.24);
+    background: rgba(250, 204, 21, 0.1);
+    color: #facc15;
+  }
+
+  .balance-shield svg {
+    height: 1.25rem;
+    width: 1.25rem;
+    fill: currentColor;
+  }
+
+  .balance-network-pill {
+    display: inline-flex;
+    width: fit-content;
+    align-items: center;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.06);
+    padding: 0.45rem 0.75rem;
+    color: #fffdf0;
+    font-size: 0.8rem;
+    font-weight: 800;
+  }
+
+  .balance-reveal-button {
+    display: inline-flex;
+    min-height: 2.85rem;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: 1px solid rgba(250, 204, 21, 0.34);
+    background: rgba(250, 204, 21, 0.12);
+    padding: 0.8rem 1.1rem;
+    color: #fffdf0;
+    font-weight: 800;
+    transition: border-color 180ms ease, background 180ms ease, transform 180ms ease, opacity 180ms ease;
+  }
+
+  .balance-reveal-button:hover:not(:disabled) {
+    border-color: rgba(250, 204, 21, 0.65);
+    background: rgba(250, 204, 21, 0.18);
+    transform: translateY(-1px);
+  }
+
+  .balance-skeleton {
+    height: 4.75rem;
+    max-width: 24rem;
+    border-radius: 18px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.06));
+    background-size: 220% 100%;
+    animation: balance-skeleton 1.25s ease-in-out infinite;
+  }
+
+  .dashboard-action-card {
+    display: flex;
+    min-width: 0;
+    gap: 0.9rem;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.045);
+    padding: 1rem;
+    transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+  }
+
+  .dashboard-action-card:hover {
+    border-color: rgba(250, 204, 21, 0.32);
+    background: rgba(255, 255, 255, 0.07);
+    transform: translateY(-2px);
+  }
+
+  .dashboard-action-icon {
+    display: grid;
+    height: 2.5rem;
+    width: 2.5rem;
+    flex: 0 0 2.5rem;
+    place-items: center;
+    border-radius: 14px;
+    background: rgba(250, 204, 21, 0.1);
+    color: #facc15;
+  }
+
+  .dashboard-action-icon svg {
+    height: 1.2rem;
+    width: 1.2rem;
+    fill: currentColor;
+  }
+
   .input-field {
     width: 100%;
     border-radius: 8px;
@@ -308,6 +426,24 @@ button:disabled {
     .secondary-button {
       width: auto;
     }
+
+    .balance-hero {
+      padding: 1.75rem;
+    }
+
+    .balance-reveal-button {
+      width: auto;
+    }
+  }
+}
+
+@keyframes balance-skeleton {
+  0% {
+    background-position: 140% 0;
+  }
+
+  100% {
+    background-position: -80% 0;
   }
 }
 

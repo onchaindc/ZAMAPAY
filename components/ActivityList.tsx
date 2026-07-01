@@ -106,9 +106,12 @@ export default function ActivityList() {
 
   return (
     <section className="glass rounded-xl p-4 sm:p-6">
-      <div className="mb-5">
-        <p className="text-xs font-semibold uppercase tracking-normal text-zama-soft sm:text-sm">Recent Activity</p>
-        <h2 className="mt-2 text-xl font-black text-white sm:text-2xl">Private transfers</h2>
+      <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-zama-soft sm:text-sm">Recent Activity</p>
+          <h2 className="mt-2 text-xl font-black text-white sm:text-2xl">Private transfers</h2>
+        </div>
+        <span className="text-sm font-semibold text-zinc-500">{activity.length} events</span>
       </div>
 
       {activity.length ? (
@@ -123,10 +126,15 @@ export default function ActivityList() {
           ))}
         </div>
       ) : (
-        <div className="rounded-xl border border-white/8 bg-white/4 px-4 py-8 text-center sm:px-5">
-          <p className="font-black text-white">No transfers yet</p>
+        <div className="rounded-2xl border border-dashed border-white/12 bg-white/[0.035] px-4 py-10 text-center sm:px-6">
+          <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl border border-zama-gold/20 bg-zama-gold/10 text-zama-gold">
+            <svg viewBox="0 0 24 24" className="h-5 w-5 fill-current" aria-hidden="true">
+              <path d="M7 3h10a2 2 0 0 1 2 2v16l-3-1.8-2 1.2-2-1.2-2 1.2-2-1.2L5 21V5a2 2 0 0 1 2-2Zm2 6h6V7H9v2Zm0 4h6v-2H9v2Z" />
+            </svg>
+          </div>
+          <p className="mt-4 font-black text-white">No private activity yet</p>
           <p className="mt-2 text-sm text-zinc-400">
-            Your private transfers will appear here.
+            Shield funds or send your first encrypted payment. Confirmed activity will appear here automatically.
           </p>
         </div>
       )}
