@@ -1,17 +1,42 @@
+ "use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import ConnectButton from "@/components/ConnectButton";
 import ZamapayLogo from "@/components/ZamapayLogo";
 
 export default function LandingPage() {
+  const fullLine = "Confidential payments on Ethereum";
+  const [typedLine, setTypedLine] = useState("");
+
+  useEffect(() => {
+    const startDelay = window.setTimeout(() => {
+      let index = 0;
+      const typeInterval = window.setInterval(() => {
+        index += 1;
+        setTypedLine(fullLine.slice(0, index));
+
+        if (index >= fullLine.length) {
+          window.clearInterval(typeInterval);
+        }
+      }, 55);
+    }, 280);
+
+    return () => {
+      window.clearTimeout(startDelay);
+    };
+  }, []);
+
   return (
-    <main className="mx-auto grid min-h-screen max-w-5xl place-items-center px-4 py-10 sm:px-6 lg:px-8">
-      <section className="welcome-stage flex w-full max-w-xl flex-col items-center text-center">
+    <main className="mx-auto grid h-[100dvh] max-w-5xl place-items-center overflow-hidden px-4 sm:px-6 lg:px-8">
+      <section className="welcome-stage flex w-full max-w-xl flex-col items-center justify-center text-center">
         <div className="welcome-logo w-full max-w-[420px]">
           <ZamapayLogo />
         </div>
 
-        <p className="welcome-typing mt-5 text-sm font-bold uppercase tracking-[0.24em] text-zama-soft">
-          Confidential payments on Ethereum
+        <p className="welcome-typing mt-5 min-h-[1.5rem] text-center text-sm font-bold uppercase tracking-[0.24em] text-zama-soft sm:min-h-[1.75rem]">
+          {typedLine}
+          <span className="welcome-caret-inline" aria-hidden="true" />
         </p>
         <p className="welcome-subcopy mt-3 max-w-md text-sm leading-6 text-zinc-400">
           Powered by Zama FHE

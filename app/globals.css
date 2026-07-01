@@ -75,8 +75,10 @@ button:disabled {
   }
 
   .app-shell-landing {
+    min-height: 100dvh;
     padding-top: 0;
     padding-left: 0;
+    overflow: hidden;
   }
 
   .app-shell > main {
@@ -723,20 +725,26 @@ button:disabled {
   }
 
   .welcome-typing {
-    width: 0;
-    max-width: 100%;
-    overflow: hidden;
+    display: inline-flex;
+    min-width: 0;
+    align-items: center;
+    justify-content: center;
     white-space: nowrap;
-    border-right: 2px solid rgba(250, 204, 21, 0.85);
-    animation:
-      welcome-type 2.2s steps(34, end) 300ms forwards,
-      welcome-caret 900ms step-end 300ms infinite;
   }
 
   .welcome-subcopy,
   .welcome-actions {
     opacity: 0;
     animation: welcome-fade 480ms ease-out 1.6s forwards;
+  }
+
+  .welcome-caret-inline {
+    display: inline-block;
+    height: 1.1em;
+    width: 2px;
+    margin-left: 0.2rem;
+    background: rgba(250, 204, 21, 0.85);
+    animation: welcome-caret 900ms step-end infinite;
   }
 }
 
@@ -920,24 +928,14 @@ button:disabled {
   }
 }
 
-@keyframes welcome-type {
-  0% {
-    width: 0;
-  }
-
-  100% {
-    width: 34ch;
-  }
-}
-
 @keyframes welcome-caret {
   0%,
   100% {
-    border-color: rgba(250, 204, 21, 0.85);
+    opacity: 1;
   }
 
   50% {
-    border-color: transparent;
+    opacity: 0;
   }
 }
 
