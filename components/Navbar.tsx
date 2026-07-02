@@ -22,6 +22,24 @@ export default function Navbar() {
     setOpen(false);
   }, [pathname]);
 
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleEscape);
+
+    return () => {
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [open]);
+
   return (
     <>
       <header className="app-topbar">
@@ -69,7 +87,7 @@ export default function Navbar() {
               aria-label="Close navigation"
               onClick={() => setOpen(false)}
             />
-            <aside className="mobile-menu md:hidden" aria-label="Mobile navigation drawer">
+            <aside className="mobile-menu md:hidden" aria-label="Mobile navigation menu">
               <nav className="mobile-menu-nav" aria-label="Mobile navigation">
                 {links.map((link) => {
                   const active = pathname === link.href;
