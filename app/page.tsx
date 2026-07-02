@@ -47,7 +47,7 @@ export default function LandingPage() {
   }, [connectedAddress, router, typedDone]);
 
   return (
-    <main className="w-full max-w-screen overflow-x-hidden px-4 py-8 md:px-8">
+    <main className="grid min-h-[100dvh] w-full max-w-screen place-items-center overflow-x-hidden p-4 md:p-8">
       <section className="welcome-stage flex w-full max-w-xl flex-col items-center justify-center text-center">
         <div className="welcome-logo w-full max-w-[420px]">
           <ZamapayLogo />

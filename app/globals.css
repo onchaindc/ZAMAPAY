@@ -918,7 +918,7 @@ button:disabled {
 
   .welcome-stage {
     position: relative;
-    top: -2vh;
+    top: 0;
     animation: welcome-fade 420ms ease-out;
     min-width: 0;
   }
@@ -1052,7 +1052,7 @@ button:disabled {
     }
 
     .welcome-stage {
-      top: -1.2vh;
+      top: 0;
       max-width: 100%;
     }
 
