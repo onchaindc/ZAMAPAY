@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { isAddress, type Log } from "ethers";
+import { isAddress } from "ethers";
 import { connectWallet, getSelectedContractAddress, getZamapayContract, truncateAddress } from "@/lib/contract";
 import { encryptAmount64 } from "@/lib/fhevm";
 import LoadingSpinner from "@/components/LoadingSpinner";
@@ -15,7 +15,7 @@ type SendFormProps = {
 export default function SendForm({ compact = false }: SendFormProps) {
   const [recipient, setRecipient] = useState("");
   const [amount, setAmount] = useState("");
-  const [generateReceipt, setGenerateReceipt] = useState(true);
+  const [generateReceipt] = useState(false);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState("");
   const [tone, setTone] = useState<"idle" | "success" | "error">("idle");
@@ -43,7 +43,7 @@ export default function SendForm({ compact = false }: SendFormProps) {
       ? "Use a whole number of tokens greater than zero."
       : "";
 
-  const primaryActionLabel = loading ? "Processing confidential payment" : "Review confidential payment";
+  const primaryActionLabel = loading ? "Processing confidential payment" : "Send confidential payment";
 
   function updateRecipient(value: string) {
     setRecipient(value);
@@ -93,36 +93,18 @@ export default function SendForm({ compact = false }: SendFormProps) {
       const contractAddress = getSelectedContractAddress();
       const encryptedAmount = await encryptAmount64(contractAddress, wallet.address, parsedAmount.toString());
       const displayAmount = formatTokenAmount(parsedAmount);
-      setToast(generateReceipt ? `Sending ${displayAmount} confidential tokens with receipt...` : `Sending ${displayAmount} confidential tokens...`);
+      setToast(`Sending ${displayAmount} confidential tokens...`);
 
-      const tx = generateReceipt
-        ? await contract.transferWithReceipt(trimmedRecipient, encryptedAmount.encryptedAmount, encryptedAmount.inputProof)
-        : await contract.transfer(trimmedRecipient, encryptedAmount.encryptedAmount, encryptedAmount.inputProof);
+      const tx = await contract.transfer(trimmedRecipient, encryptedAmount.encryptedAmount, encryptedAmount.inputProof);
 
       setToast(`Transaction submitted: ${truncateAddress(tx.hash)}`);
-      const receipt = await tx.wait();
-      // The receiptId is emitted in the TransferWithReceipt event (return values
-      // of non-view functions are not accessible off-chain).
-      const receiptEvent = receipt?.logs
-        ? (contract.interface.parseLog(receipt.logs.find((log: Log) => {
-            try {
-              return contract.interface.parseLog(log)?.name === "TransferWithReceipt";
-            } catch {
-              return false;
-            }
-          }) ?? receipt.logs[0]) ?? null)
-        : null;
-      const receiptId = (receiptEvent?.args?.receiptId as string | undefined) ?? null;
-      setToast(
-        generateReceipt && receiptId
-          ? `Confidential payment confirmed. Receipt: ${truncateAddress(receiptId)}`
-          : "Confidential payment confirmed."
-      );
+      await tx.wait();
+      setToast("Confidential payment confirmed.");
       setTone("success");
       setSuccessSummary({
         recipient: trimmedRecipient,
         amount: displayAmount,
-        receipt: generateReceipt
+        receipt: false
       });
       setRecipient("");
       setAmount("");
@@ -192,29 +174,16 @@ export default function SendForm({ compact = false }: SendFormProps) {
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={() => setGenerateReceipt((current) => !current)}
-              className="send-receipt-toggle"
-              aria-pressed={generateReceipt}
-            >
+            <button type="button" className="send-receipt-toggle" aria-pressed={false} disabled>
               <span className="min-w-0">
                 <span className="block text-sm font-bold uppercase tracking-[0.18em] text-zama-soft">Selective proof</span>
-                <span className="mt-2 block text-base font-black text-white">Generate selective receipt</span>
+                <span className="mt-2 block text-base font-black text-white">Selective receipt coming soon</span>
                 <span className="mt-1 block text-sm leading-6 text-zinc-400">
-                  Preserve a confidential proof trail for authorized parties after settlement.
+                  ZamapayVault now supports shield, transfer, balance, and unshield. Receipt proofs will return in the next contract phase.
                 </span>
               </span>
-              <span
-                className={`ml-4 flex h-7 w-12 shrink-0 items-center rounded-full p-1 transition ${
-                  generateReceipt ? "bg-zama-gold" : "bg-white/12"
-                }`}
-              >
-                <span
-                  className={`h-5 w-5 rounded-full bg-white transition ${
-                    generateReceipt ? "translate-x-5" : "translate-x-0"
-                  }`}
-                />
+              <span className="ml-4 flex h-7 w-12 shrink-0 items-center rounded-full bg-white/12 p-1 transition">
+                <span className="h-5 w-5 rounded-full bg-white transition" />
               </span>
             </button>
           </div>

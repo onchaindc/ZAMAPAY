@@ -2,8 +2,6 @@ import { hexlify } from "ethers";
 import type { JsonRpcSigner } from "ethers";
 import type { FhevmInstance } from "@zama-fhe/relayer-sdk/web";
 
-const ZAMAPAY_SEPOLIA_ADDRESS = "0x3cE4bB69e2Aa72A336251064101F6a42779b132C";
-
 let instance: FhevmInstance | null = null;
 
 export async function getFhevmInstance() {
@@ -70,6 +68,7 @@ export async function userDecryptHandle(
 }
 
 export async function userDecryptBalanceHandle(
+  contractAddress: string,
   userAddress: string,
   encryptedHandle: unknown,
   signer: JsonRpcSigner
@@ -79,18 +78,18 @@ export async function userDecryptBalanceHandle(
   const { publicKey, privateKey } = fhevm.generateKeypair();
   const startTimestamp = Math.floor(Date.now() / 1000);
   const durationDays = 7;
-  const eip712 = fhevm.createEIP712(publicKey, [ZAMAPAY_SEPOLIA_ADDRESS], startTimestamp, durationDays);
+  const eip712 = fhevm.createEIP712(publicKey, [contractAddress], startTimestamp, durationDays);
   const signature = await signer.signTypedData(
     eip712.domain,
     { UserDecryptRequestVerification: [...eip712.types.UserDecryptRequestVerification] },
     eip712.message
   );
   const decrypted = await fhevm.userDecrypt(
-    [{ handle, contractAddress: ZAMAPAY_SEPOLIA_ADDRESS }],
+    [{ handle, contractAddress }],
     privateKey,
     publicKey,
     signature,
-    [ZAMAPAY_SEPOLIA_ADDRESS],
+    [contractAddress],
     userAddress,
     startTimestamp,
     durationDays

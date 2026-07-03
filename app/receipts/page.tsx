@@ -1,53 +1,46 @@
 "use client";
 
 import { useState } from "react";
-import { connectWallet, getZamapayContract } from "@/lib/contract";
-import ReceiptCard, { ReceiptView } from "@/components/ReceiptCard";
+import { connectWallet, getSelectedContractAddress, getZamapayContract, truncateAddress } from "@/lib/contract";
+import { encryptAmount64 } from "@/lib/fhevm";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Toast from "@/components/Toast";
-import { getFriendlyErrorMessage } from "@/lib/ui";
+import { formatTokenAmount, getFriendlyErrorMessage, parseTokenAmount } from "@/lib/ui";
 
 export default function ReceiptsPage() {
-  const [receipts, setReceipts] = useState<ReceiptView[]>([]);
+  const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState("");
   const [tone, setTone] = useState<"idle" | "success" | "error">("idle");
 
-  const skeletonRows = Array.from({ length: 3 }, (_, index) => `receipt-skeleton-${index}`);
-
-  async function loadReceipts() {
-    setLoading(true);
-    setToast("Loading confidential receipt IDs...");
+  async function unshieldBalance() {
+    setToast("");
     setTone("idle");
+
+    const parsedAmount = parseTokenAmount(amount);
+    if (!parsedAmount) {
+      setToast("Enter a whole number of tokens greater than zero.");
+      setTone("error");
+      return;
+    }
+
+    setLoading(true);
+    setToast("Encrypting unshield amount locally...");
 
     try {
       const wallet = await connectWallet();
       const contract = getZamapayContract(wallet.signer);
-      const [sentIds, receivedIds] = await Promise.all([
-        contract.getSentReceipts(wallet.address),
-        contract.getReceivedReceipts(wallet.address)
-      ]);
-      const ids = Array.from(new Set([...(sentIds as string[]), ...(receivedIds as string[])]));
-      setToast("Loading encrypted payment details...");
+      const contractAddress = getSelectedContractAddress();
+      const encryptedAmount = await encryptAmount64(contractAddress, wallet.address, parsedAmount.toString());
+      const tx = await contract.unshield(encryptedAmount.encryptedAmount, encryptedAmount.inputProof);
 
-      const details = await Promise.all(
-        ids.map(async (id) => {
-          const receipt = await contract.getReceipt(id);
-          return {
-            id,
-            sender: receipt.sender,
-            receiver: receipt.receiver,
-            encryptedAmount: receipt.encryptedAmount,
-            timestamp: Number(receipt.timestamp)
-          };
-        })
-      );
-
-      setReceipts(details);
-      setToast(details.length ? "Confidential activity loaded." : "No confidential activity found for this wallet.");
+      setToast(`Unshield transaction submitted: ${truncateAddress(tx.hash)}`);
+      await tx.wait();
+      setToast(`Unshielded ${formatTokenAmount(parsedAmount)} confidential tokens.`);
       setTone("success");
+      setAmount("");
     } catch (error) {
-      setToast(getFriendlyErrorMessage(error, "network"));
+      setToast(getFriendlyErrorMessage(error, "contract"));
       setTone("error");
     } finally {
       setLoading(false);
@@ -60,66 +53,44 @@ export default function ReceiptsPage() {
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-zama-soft md:text-sm">Powered by Zama FHE</p>
           <h1 className="mt-3 text-3xl font-black leading-tight text-white md:text-5xl">
-            Confidential payment activity.
+            Unshield confidential funds.
           </h1>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-400 md:text-base">
-            Review encrypted receipts, inspect counterparties, and reveal payment details locally when needed.
+            Reduce your encrypted ZamaPay vault balance. ETH withdrawals will be enabled after the confidential accounting flow is complete.
           </p>
         </div>
-        <button type="button" onClick={loadReceipts} disabled={loading} className="primary-button md:w-auto">
-          {loading ? <LoadingSpinner className="mr-2" /> : null}
-          Load Confidential Activity
-        </button>
       </div>
 
-      <div className="mb-5">
-        <Toast message={toast} tone={tone} />
-      </div>
-
-      <section className="activity-surface">
-        <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-zama-soft md:text-sm">Timeline</p>
-            <h2 className="mt-2 text-xl font-black text-white md:text-2xl">Confidential transactions</h2>
-          </div>
-          <span className="text-sm font-semibold text-zinc-500">
-            {loading ? "Refreshing..." : `${receipts.length} confidential receipts`}
-          </span>
+      <section className="activity-surface max-w-2xl">
+        <div className="mb-6">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-zama-soft md:text-sm">Unshield</p>
+          <h2 className="mt-2 text-xl font-black text-white md:text-2xl">Update encrypted balance</h2>
+          <p className="mt-2 text-sm leading-6 text-zinc-400">
+            For now this updates the confidential balance only. No ETH is sent from the vault in this phase.
+          </p>
         </div>
 
-        {loading ? (
-          <div className="activity-timeline">
-            {skeletonRows.map((row) => (
-              <div key={row} className="activity-skeleton-card">
-                <div className="activity-timeline-marker" aria-hidden="true" />
-                <div className="grid gap-4">
-                  <div className="activity-skeleton-line h-3 w-28" />
-                  <div className="activity-skeleton-line h-9 w-40" />
-                  <div className="activity-skeleton-line h-3 w-full max-w-[22rem]" />
-                  <div className="activity-skeleton-line h-3 w-full max-w-[18rem]" />
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : receipts.length ? (
-          <div className="activity-timeline">
-            {receipts.map((receipt) => (
-              <ReceiptCard key={receipt.id} receipt={receipt} />
-            ))}
-          </div>
-        ) : (
-          <div className="activity-empty-state">
-            <div className="activity-empty-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" className="h-6 w-6 fill-current">
-                <path d="M12 3 5 6.2v5.6c0 4.1 2.9 7.7 7 8.7 4.1-1 7-4.6 7-8.7V6.2L12 3Zm0 4.2 3.8 1.7v3c0 2.5-1.5 4.7-3.8 5.7-2.3-1-3.8-3.2-3.8-5.7v-3L12 7.2Z" />
-              </svg>
-            </div>
-            <p className="mt-4 font-black text-white">No confidential activity yet</p>
-            <p className="mt-2 max-w-lg text-sm leading-6 text-zinc-400">
-              Shield funds or send a confidential payment. Once payments settle, receipts will appear in this encrypted timeline.
-            </p>
-          </div>
-        )}
+        <div className="grid gap-5">
+          <label className="grid gap-2 text-sm font-semibold text-white">
+            Confidential token amount
+            <input
+              value={amount}
+              onChange={(event) => setAmount(event.target.value)}
+              inputMode="numeric"
+              placeholder="25"
+              className="input-field"
+            />
+          </label>
+
+          <button type="button" onClick={unshieldBalance} disabled={loading} className="primary-button md:w-auto">
+            {loading ? <LoadingSpinner className="mr-2" /> : null}
+            Unshield Funds
+          </button>
+        </div>
+
+        <div className="mt-4">
+          <Toast message={toast} tone={tone} />
+        </div>
       </section>
     </main>
   );

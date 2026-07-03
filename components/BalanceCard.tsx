@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { connectWallet, getConnectedNetworkName, getZamapayContract } from "@/lib/contract";
+import { connectWallet, getConnectedNetworkName, getSelectedContractAddress, getZamapayContract } from "@/lib/contract";
 import { userDecryptBalanceHandle } from "@/lib/fhevm";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Toast from "@/components/Toast";
@@ -64,9 +64,10 @@ export default function BalanceCard() {
     try {
       const wallet = await connectWallet();
       const contract = getZamapayContract(wallet.signer);
+      const contractAddress = getSelectedContractAddress();
       const userAddress = await wallet.signer.getAddress();
       const handle = await contract.balanceOf(userAddress);
-      const value = await userDecryptBalanceHandle(userAddress, handle, wallet.signer);
+      const value = await userDecryptBalanceHandle(contractAddress, userAddress, handle, wallet.signer);
       const decryptedBalance = value?.toString?.() ?? String(value);
 
       // The contract never granted this user decryption rights (no mint /

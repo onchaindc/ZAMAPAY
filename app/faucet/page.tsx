@@ -1,33 +1,27 @@
 "use client";
 
 import { useState } from "react";
-import { isAddress } from "ethers";
-import { connectWallet, getZamapayContract, truncateAddress } from "@/lib/contract";
+import { parseEther } from "ethers";
+import { connectWallet, getSelectedContractAddress, getZamapayContract, truncateAddress } from "@/lib/contract";
+import { encryptAmount64 } from "@/lib/fhevm";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Toast from "@/components/Toast";
 import { getFriendlyErrorMessage, parseTokenAmount } from "@/lib/ui";
 
 export default function FaucetPage() {
-  const [recipient, setRecipient] = useState("");
   const [amount, setAmount] = useState("100");
+  const [ethAmount, setEthAmount] = useState("0.001");
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState("");
   const [tone, setTone] = useState<"idle" | "success" | "error">("idle");
 
-  async function mintBalance() {
+  async function shieldBalance() {
     setToast("");
     setTone("idle");
 
     const wallet = await connectWallet().catch(() => null);
     if (!wallet) {
       setToast("Connect your wallet first.");
-      setTone("error");
-      return;
-    }
-
-    const target = recipient.trim() || wallet.address;
-    if (!isAddress(target)) {
-      setToast("Enter a valid recipient address.");
       setTone("error");
       return;
     }
@@ -39,31 +33,38 @@ export default function FaucetPage() {
       return;
     }
 
+    let ethValue: bigint;
+    try {
+      ethValue = parseEther(ethAmount || "0");
+    } catch {
+      setToast("Enter a valid ETH amount to lock.");
+      setTone("error");
+      return;
+    }
+
+    if (ethValue <= BigInt(0)) {
+      setToast("Enter an ETH amount greater than zero.");
+      setTone("error");
+      return;
+    }
+
     setLoading(true);
-    setToast("Submitting mint transaction...");
+    setToast("Encrypting shield amount locally...");
 
     try {
       const contract = getZamapayContract(wallet.signer);
-      const tx = await contract.mint(target, parsedAmount);
-      setToast(`Mint submitted: ${truncateAddress(tx.hash)}`);
+      const contractAddress = getSelectedContractAddress();
+      const encryptedAmount = await encryptAmount64(contractAddress, wallet.address, parsedAmount.toString());
+      const tx = await contract.shield(encryptedAmount.encryptedAmount, encryptedAmount.inputProof, {
+        value: ethValue
+      });
+
+      setToast(`Shield transaction submitted: ${truncateAddress(tx.hash)}`);
       await tx.wait();
-      setToast(`Shielded ${amount} confidential tokens to ${truncateAddress(target)}.`);
+      setToast(`Shielded ${amount} confidential tokens to ${truncateAddress(wallet.address)}.`);
       setTone("success");
-      setRecipient("");
     } catch (error) {
-      // mint() is owner-only — surface that clearly instead of the generic
-      // "check your balance" message from getFriendlyErrorMessage.
-      const msg = error instanceof Error ? error.message.toLowerCase() : "";
-      if (
-        msg.includes("owner") ||
-        msg.includes("ownable") ||
-        msg.includes("missing role") ||
-        msg.includes("execution reverted")
-      ) {
-        setToast("Mint is owner-only. Connect with the deployer wallet.");
-      } else {
-        setToast(getFriendlyErrorMessage(error, "contract"));
-      }
+      setToast(getFriendlyErrorMessage(error, "contract"));
       setTone("error");
     } finally {
       setLoading(false);
@@ -84,17 +85,7 @@ export default function FaucetPage() {
       <section className="glass w-full rounded-xl p-4 md:max-w-2xl md:p-6">
         <div className="grid gap-5">
           <label className="grid gap-2 text-sm font-semibold text-white">
-            Recipient
-            <input
-              value={recipient}
-              onChange={(event) => setRecipient(event.target.value)}
-              placeholder="0x... (defaults to your wallet)"
-              className="input-field"
-            />
-          </label>
-
-          <label className="grid gap-2 text-sm font-semibold text-white">
-            Amount
+            Confidential token amount
             <input
               value={amount}
               onChange={(event) => setAmount(event.target.value)}
@@ -104,7 +95,18 @@ export default function FaucetPage() {
             />
           </label>
 
-          <button type="button" onClick={mintBalance} disabled={loading} className="primary-button md:w-auto">
+          <label className="grid gap-2 text-sm font-semibold text-white">
+            ETH to lock
+            <input
+              value={ethAmount}
+              onChange={(event) => setEthAmount(event.target.value)}
+              inputMode="decimal"
+              placeholder="0.001"
+              className="input-field"
+            />
+          </label>
+
+          <button type="button" onClick={shieldBalance} disabled={loading} className="primary-button md:w-auto">
             {loading ? <LoadingSpinner className="mr-2" /> : null}
             Shield Funds
           </button>

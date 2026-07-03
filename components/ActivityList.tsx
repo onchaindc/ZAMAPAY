@@ -1,6 +1,6 @@
 "use client";
 
-import { BrowserProvider, EventLog } from "ethers";
+import { BrowserProvider } from "ethers";
 import { useEffect, useState } from "react";
 import { getZamapayContract } from "@/lib/contract";
 import TransactionRow from "@/components/TransactionRow";
@@ -11,6 +11,26 @@ type ActivityItem = {
   timestamp: number;
   label: string;
 };
+
+type VaultEvent = {
+  args: Record<string, unknown>;
+  blockNumber: number;
+  eventName: string;
+  index: number;
+  transactionHash: string;
+};
+
+function isVaultEvent(event: unknown): event is VaultEvent {
+  return (
+    typeof event === "object" &&
+    event !== null &&
+    "args" in event &&
+    "blockNumber" in event &&
+    "eventName" in event &&
+    "index" in event &&
+    "transactionHash" in event
+  );
+}
 
 export default function ActivityList() {
   const [activity, setActivity] = useState<ActivityItem[]>([]);
@@ -41,17 +61,17 @@ export default function ActivityList() {
         const signer = await provider.getSigner(userAddress);
         const contract = getZamapayContract(signer);
         const events = await Promise.all([
-          contract.queryFilter(contract.filters.Transfer(userAddress, null, null)),
-          contract.queryFilter(contract.filters.Transfer(null, userAddress, null)),
-          contract.queryFilter(contract.filters.TransferWithReceipt(userAddress, null, null, null)),
-          contract.queryFilter(contract.filters.TransferWithReceipt(null, userAddress, null, null)),
+          contract.queryFilter(contract.filters.Shielded(userAddress, null)),
+          contract.queryFilter(contract.filters.Transferred(userAddress, null)),
+          contract.queryFilter(contract.filters.Transferred(null, userAddress)),
+          contract.queryFilter(contract.filters.Unshielded(userAddress)),
         ]);
 
+        const flattenedEvents: unknown[] = events.flat();
         const uniqueEvents = Array.from(
-          new Map(
-            events
-              .flat()
-              .filter((event): event is EventLog => "args" in event)
+          new Map<string, VaultEvent>(
+            flattenedEvents
+              .filter(isVaultEvent)
               .map((event) => [`${event.transactionHash}-${event.index}`, event])
           ).values()
         );
@@ -59,12 +79,17 @@ export default function ActivityList() {
         const rows = await Promise.all(
           uniqueEvents.map(async (event) => {
             const block = await provider.getBlock(event.blockNumber);
-            const from = String(event.args.from ?? event.args.sender ?? userAddress);
-            const to = String(event.args.to ?? event.args.receiver ?? userAddress);
+            const from = String(event.args.from ?? event.args.user ?? userAddress);
+            const to = String(event.args.to ?? event.args.user ?? userAddress);
             const outgoing = from.toLowerCase() === userAddress.toLowerCase();
-            const label = `${outgoing ? "Sent" : "Received"}${
-              event.eventName === "TransferWithReceipt" ? " with receipt" : ""
-            }`;
+            const label =
+              event.eventName === "Shielded"
+                ? "Shielded"
+                : event.eventName === "Unshielded"
+                  ? "Unshielded"
+                  : outgoing
+                    ? "Sent"
+                    : "Received";
 
             return {
               id: `${event.transactionHash}-${event.index}`,
