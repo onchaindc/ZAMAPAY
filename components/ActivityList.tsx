@@ -18,29 +18,27 @@ function ActivityPreview({ item, onOpen }: { item: VaultEventItem; onOpen: () =>
     <button type="button" className="activity-card activity-card-button activity-preview-card" onClick={onOpen}>
       <div className="activity-timeline-marker" aria-hidden="true" />
 
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="flex min-w-0 items-start gap-3">
-            <span className="activity-event-icon" aria-hidden="true">
-              {getEventIcon(item.variant)}
-            </span>
+      <div className="activity-preview-layout">
+        <div className="flex min-w-0 items-start gap-3">
+          <span className="activity-event-icon" aria-hidden="true">
+            {getEventIcon(item.variant)}
+          </span>
 
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2">
-                <p className="text-base font-black text-white">{item.title}</p>
-                <span className={`activity-status-badge ${getStatusTone(item.status)}`}>{item.status}</span>
-              </div>
-              <p className="mt-1 text-sm text-zinc-400">Counterparty: {item.counterparty}</p>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="text-base font-black text-white">{item.title}</p>
+              <span className={`activity-status-badge ${getStatusTone(item.status)}`}>{item.status}</span>
             </div>
-          </div>
-
-          <div className="min-w-0 text-left md:text-right">
-            <p className="text-base font-black text-white">{item.amountLabel}</p>
-            <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">{relativeTime}</p>
+            <p className="mt-1 text-sm text-zinc-400">Counterparty: {item.counterparty}</p>
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-zinc-400">
+        <div className="activity-preview-amount">
+          <p className="text-base font-black text-white">{item.amountLabel}</p>
+          <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">{relativeTime}</p>
+        </div>
+
+        <div className="activity-preview-meta">
           <div className="flex min-w-0 flex-wrap items-center gap-2">
             <span className="activity-hash-chip">{item.txHash.slice(0, 10)}...{item.txHash.slice(-6)}</span>
             <span>{item.networkName}</span>
