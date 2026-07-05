@@ -85,7 +85,7 @@ export default function ReceiptCard({ receipt }: ReceiptCardProps) {
           <p className="mt-3 text-3xl font-black leading-none text-white md:text-4xl">
             {loading ? <span className="activity-skeleton-line block h-10 w-24" aria-label="Loading amount" /> : amount || "\u2022\u2022\u2022\u2022"}
           </p>
-          <p className="mt-2 text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">Confidential ETH</p>
+          <p className="mt-2 text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">Balance</p>
         </div>
       </div>
 

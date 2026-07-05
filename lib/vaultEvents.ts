@@ -276,7 +276,7 @@ async function loadVaultEventsFromRpc(rpcUrl: string, userAddress: string, selec
     try {
       const clearValue = normalizeClearValue(await publicDecryptHandle(amountHandle));
       if (clearValue !== null) {
-        amountLabel = `${clearValue.toString()} ETH`;
+        amountLabel = clearValue.toString();
       }
     } catch {
       amountLabel = "Encrypted";
@@ -319,7 +319,7 @@ async function loadVaultEventsFromRpc(rpcUrl: string, userAddress: string, selec
       timestamp: timestampByBlock.get(log.blockNumber) ?? 0,
       sender: "Vault",
       receiver: String(log.args.user),
-      amountLabel: matchedAmount,
+      amountLabel: matchedAmount === "Encrypted" ? matchedAmount : `${matchedAmount} ETH`,
       status: "Completed"
     });
   }

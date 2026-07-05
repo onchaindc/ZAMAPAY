@@ -113,7 +113,7 @@ export default function BalanceCard() {
 
     switch (revealState) {
       case "empty":
-        return "No confidential balance yet";
+        return "No balance yet";
       case "pending":
         return "Decrypting…";
       case "unavailable":
@@ -136,7 +136,7 @@ export default function BalanceCard() {
                 </svg>
               </span>
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-zama-soft md:text-sm">
-                Confidential Balance
+                Balance
               </p>
             </div>
 
@@ -148,11 +148,6 @@ export default function BalanceCard() {
                   <span className="status-text text-4xl font-black leading-none text-white md:text-5xl lg:text-6xl">
                     {balanceLabel}
                   </span>
-                  {revealState === "real" ? (
-                    <span className="pb-1 text-sm font-bold uppercase tracking-[0.18em] text-zinc-400 md:pb-2">
-                      ETH
-                    </span>
-                  ) : null}
                 </div>
               )}
             </div>

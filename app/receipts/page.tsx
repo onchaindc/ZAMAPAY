@@ -39,7 +39,7 @@ export default function ReceiptsPage() {
       setToast(`Unshield transaction submitted: ${truncateAddress(tx.hash)}`);
       await tx.wait();
       notifyVaultActivityChanged();
-      setToast(`Unshielded ${formatTokenAmount(parsedAmount)} confidential ETH.`);
+      setToast(`Unshielded ${formatTokenAmount(parsedAmount)} ETH.`);
       setTone("success");
       setAmount("");
     } catch (error) {
@@ -78,7 +78,7 @@ export default function ReceiptsPage() {
 
           <div className="grid gap-5">
             <label className="grid gap-2 text-sm font-semibold text-white">
-              Confidential ETH amount
+              Withdrawal amount
               <input
                 value={amount}
                 onChange={(event) => setAmount(event.target.value)}

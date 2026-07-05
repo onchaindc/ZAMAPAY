@@ -41,10 +41,10 @@ export default function SendForm({ compact = false }: SendFormProps) {
   const amountError = amountTouched && !amount.trim()
     ? "Enter the amount to encrypt."
     : amountTouched && !amountValid
-      ? "Use a whole ETH amount greater than zero."
+      ? "Use a whole amount greater than zero."
       : "";
 
-  const primaryActionLabel = loading ? "Processing confidential payment" : "Send confidential ETH";
+  const primaryActionLabel = loading ? "Processing confidential payment" : "Send confidential payment";
 
   function updateRecipient(value: string) {
     setRecipient(value);
@@ -80,7 +80,7 @@ export default function SendForm({ compact = false }: SendFormProps) {
     }
 
     if (!parsedAmount) {
-      setToast("Enter a whole ETH amount greater than zero.");
+      setToast("Enter a whole amount greater than zero.");
       setTone("error");
       return;
     }
@@ -94,7 +94,7 @@ export default function SendForm({ compact = false }: SendFormProps) {
       const contractAddress = getSelectedContractAddress();
       const encryptedAmount = await encryptAmount64(contractAddress, wallet.address, parsedAmount.toString());
       const displayAmount = formatTokenAmount(parsedAmount);
-      setToast(`Sending ${displayAmount} confidential ETH...`);
+      setToast(`Sending ${displayAmount} confidential balance...`);
 
       const tx = await contract.transfer(trimmedRecipient, encryptedAmount.encryptedAmount, encryptedAmount.inputProof);
 
@@ -126,7 +126,7 @@ export default function SendForm({ compact = false }: SendFormProps) {
         <div className="min-w-0">
           <div className="mb-5">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-zama-soft md:text-sm">Powered by Zama FHE</p>
-            <h2 className="mt-2 text-2xl font-black text-white md:text-[2rem]">Send confidential ETH</h2>
+            <h2 className="mt-2 text-2xl font-black text-white md:text-[2rem]">Send confidential payment</h2>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-400">
               Confirm the recipient, encrypt the payment amount, and choose whether to generate a selective receipt.
             </p>
@@ -170,7 +170,7 @@ export default function SendForm({ compact = false }: SendFormProps) {
                     aria-invalid={amountError ? true : false}
                   />
                   <span className={`text-xs ${amountError ? "text-rose-300" : "text-zinc-500"}`}>
-                    {amountError || "Whole confidential ETH units only."}
+                    {amountError || "Whole confidential balance units only."}
                   </span>
                 </label>
               </div>
@@ -212,7 +212,7 @@ export default function SendForm({ compact = false }: SendFormProps) {
             <div className="send-summary-row">
               <span className="text-zinc-400">Amount</span>
               <span className="font-semibold text-white">
-                {parsedAmount ? `${formatTokenAmount(parsedAmount)} ETH` : "Not entered"}
+                {parsedAmount ? formatTokenAmount(parsedAmount) : "Not entered"}
               </span>
             </div>
             <div className="send-summary-row">
@@ -244,7 +244,7 @@ export default function SendForm({ compact = false }: SendFormProps) {
                 <div>
                   <p className="font-black text-white">Confidential payment confirmed</p>
                   <p className="mt-1 text-sm leading-6 text-zinc-400">
-                    {successSummary.amount} ETH sent to {truncateAddress(successSummary.recipient)}.
+                    {successSummary.amount} sent to {truncateAddress(successSummary.recipient)}.
                     {successSummary.receipt ? " Selective receipt enabled." : " No receipt generated."}
                   </p>
                 </div>
