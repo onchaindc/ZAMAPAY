@@ -126,10 +126,10 @@ export default function BalanceCard() {
   return (
     <section className="balance-hero">
       <div className="balance-hero-glow" aria-hidden="true" />
-      <div className="relative flex flex-col gap-8">
-        <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+      <div className="relative flex flex-col gap-5 md:gap-8">
+        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between md:gap-6">
           <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2.5 md:gap-3">
               <span className="balance-shield" aria-hidden="true">
                 <svg viewBox="0 0 24 24">
                   <path d="M12 3 5 6.2v5.6c0 4.1 2.9 7.7 7 8.7 4.1-1 7-4.6 7-8.7V6.2L12 3Zm0 4.2 3.8 1.7v3c0 2.5-1.5 4.7-3.8 5.7-2.3-1-3.8-3.2-3.8-5.7v-3L12 7.2Z" />
@@ -140,7 +140,7 @@ export default function BalanceCard() {
               </p>
             </div>
 
-            <div className="mt-4 min-h-[4.5rem] md:min-h-[5rem]">
+            <div className="mt-3 min-h-[3.7rem] md:mt-4 md:min-h-[5rem]">
               {loading ? (
                 <div className="balance-skeleton" aria-label="Loading balance" />
               ) : (
@@ -152,7 +152,7 @@ export default function BalanceCard() {
               )}
             </div>
 
-            <div className="mt-4 flex flex-col gap-2 md:flex-row md:items-center md:gap-3">
+            <div className="mt-3 flex flex-col gap-2 md:mt-4 md:flex-row md:items-center md:gap-3">
               <span className="balance-network-pill">{networkName}</span>
             </div>
 

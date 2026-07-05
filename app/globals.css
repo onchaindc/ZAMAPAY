@@ -1306,17 +1306,28 @@ button:disabled {
     }
 
     .balance-hero {
-      padding: 1rem;
+      padding: 0.9rem;
     }
 
     .balance-hero .status-text {
-      font-size: clamp(2rem, 11vw, 2.75rem);
+      font-size: clamp(1.85rem, 10vw, 2.55rem);
       line-height: 1;
     }
 
     .balance-skeleton {
-      height: 3.75rem;
+      height: 3.35rem;
       max-width: 100%;
+    }
+
+    .balance-network-pill {
+      padding: 0.38rem 0.68rem;
+      font-size: 0.74rem;
+    }
+
+    .balance-reveal-button {
+      min-height: 2.75rem;
+      padding-top: 0.72rem;
+      padding-bottom: 0.72rem;
     }
 
     .dashboard-action-card {
@@ -1331,7 +1342,7 @@ button:disabled {
     .activity-surface,
     .activity-card,
     .activity-skeleton-card {
-      padding: 0.875rem;
+      padding: 0.82rem;
     }
 
     .send-receipt-toggle {
@@ -1384,7 +1395,7 @@ button:disabled {
 
     .activity-preview-top {
       flex-direction: column;
-      gap: 0.7rem;
+      gap: 0.6rem;
     }
 
     .activity-preview-amount {
@@ -1394,6 +1405,23 @@ button:disabled {
 
     .activity-preview-meta {
       align-items: flex-start;
+    }
+
+    .activity-preview-card {
+      padding-top: 0.65rem;
+      padding-bottom: 0.65rem;
+    }
+
+    .activity-preview-subcopy {
+      margin-top: 0.2rem;
+      font-size: 0.82rem;
+      line-height: 1.25rem;
+    }
+
+    .activity-inline-action {
+      min-height: 2.75rem;
+      padding-left: 0.85rem;
+      padding-right: 0.85rem;
     }
 
     .activity-history-header {

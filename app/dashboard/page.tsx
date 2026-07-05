@@ -37,46 +37,46 @@ const quickActions = [
 
 export default function DashboardPage() {
   return (
-    <main className="mx-auto w-full max-w-6xl overflow-x-hidden px-4 pb-20 pt-3 md:flex md:h-[calc(100dvh-5.5rem)] md:flex-col md:overflow-hidden md:px-8 md:pb-5 md:pt-4">
-      <div className="mx-auto mb-4 max-w-3xl text-center md:mb-4">
+    <main className="mx-auto w-full max-w-6xl overflow-x-hidden px-4 pb-12 pt-2 md:flex md:h-[calc(100dvh-5.5rem)] md:flex-col md:overflow-hidden md:px-8 md:pb-5 md:pt-4">
+      <div className="mx-auto mb-3 max-w-3xl text-center md:mb-4">
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-zama-soft md:text-sm">Powered by Zama FHE</p>
-        <h1 className="mt-2 text-[1.85rem] font-black leading-tight text-white md:mt-2 md:text-[2.9rem]">
+        <h1 className="mt-1.5 text-[1.7rem] font-black leading-tight text-white md:mt-2 md:text-[2.9rem]">
           Your confidential balance.
         </h1>
-        <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-zinc-400 md:mt-3 md:text-base">
+        <p className="mx-auto mt-1.5 max-w-2xl text-[0.92rem] leading-5 text-zinc-400 md:mt-3 md:text-base md:leading-6">
           Manage shielded funds, confidential payments, and selective receipts from one encrypted vault.
         </p>
       </div>
 
-      <div className="grid gap-4 md:min-h-0 md:flex-1 md:overflow-hidden md:gap-4">
+      <div className="grid gap-3 md:min-h-0 md:flex-1 md:overflow-hidden md:gap-4">
         <BalanceCard />
 
-        <section aria-labelledby="quick-actions-title" className="grid gap-4">
+        <section aria-labelledby="quick-actions-title" className="grid gap-3 md:gap-4">
           <div className="text-center">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-zama-soft md:text-sm">Quick Actions</p>
-            <h2 id="quick-actions-title" className="mt-2 text-xl font-black text-white md:text-2xl">
+            <h2 id="quick-actions-title" className="mt-1.5 text-[1.1rem] font-black text-white md:mt-2 md:text-2xl">
               Move value confidentially
             </h2>
           </div>
 
-          <div className="grid grid-cols-3 gap-3 md:hidden">
-            <Link href="/faucet" className="glass flex min-h-[92px] flex-col items-center justify-center gap-2 rounded-[20px] p-3 text-center">
-              <span className="grid h-10 w-10 place-items-center rounded-[14px] border border-zama-gold/20 bg-zama-gold/10 text-zama-soft">
+          <div className="grid grid-cols-3 gap-2.5 md:hidden">
+            <Link href="/faucet" className="glass flex min-h-[82px] flex-col items-center justify-center gap-1.5 rounded-[18px] p-2.5 text-center">
+              <span className="grid h-9 w-9 place-items-center rounded-[13px] border border-zama-gold/20 bg-zama-gold/10 text-zama-soft">
                 {quickActions[0].icon}
               </span>
-              <span className="text-sm font-black text-white">Shield</span>
+              <span className="text-[0.82rem] font-black text-white">Shield</span>
             </Link>
-            <Link href="/send" className="glass flex min-h-[92px] flex-col items-center justify-center gap-2 rounded-[20px] p-3 text-center">
-              <span className="grid h-10 w-10 place-items-center rounded-[14px] border border-zama-gold/20 bg-zama-gold/10 text-zama-soft">
+            <Link href="/send" className="glass flex min-h-[82px] flex-col items-center justify-center gap-1.5 rounded-[18px] p-2.5 text-center">
+              <span className="grid h-9 w-9 place-items-center rounded-[13px] border border-zama-gold/20 bg-zama-gold/10 text-zama-soft">
                 {quickActions[1].icon}
               </span>
-              <span className="text-sm font-black text-white">Send</span>
+              <span className="text-[0.82rem] font-black text-white">Send</span>
             </Link>
-            <Link href="/receipts" className="glass flex min-h-[92px] flex-col items-center justify-center gap-2 rounded-[20px] p-3 text-center">
-              <span className="grid h-10 w-10 place-items-center rounded-[14px] border border-zama-gold/20 bg-zama-gold/10 text-zama-soft">
+            <Link href="/receipts" className="glass flex min-h-[82px] flex-col items-center justify-center gap-1.5 rounded-[18px] p-2.5 text-center">
+              <span className="grid h-9 w-9 place-items-center rounded-[13px] border border-zama-gold/20 bg-zama-gold/10 text-zama-soft">
                 {quickActions[2].icon}
               </span>
-              <span className="text-sm font-black text-white">Withdraw</span>
+              <span className="text-[0.82rem] font-black text-white">Withdraw</span>
             </Link>
           </div>
 
