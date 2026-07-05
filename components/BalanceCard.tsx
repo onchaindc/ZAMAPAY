@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { connectWallet, getConnectedNetworkName, getSelectedContractAddress, getVaultContract } from "@/lib/contract";
+import { connectWallet, getSelectedContractAddress, getSelectedNetwork, getVaultContract } from "@/lib/contract";
 import { userDecryptBalanceHandle } from "@/lib/fhevm";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Toast from "@/components/Toast";
@@ -19,7 +19,7 @@ type RevealState = "idle" | "real" | "empty" | "pending" | "unavailable";
 export default function BalanceCard() {
   const [balance, setBalance] = useState("");
   const [revealState, setRevealState] = useState<RevealState>("idle");
-  const [networkName, setNetworkName] = useState("Connected network");
+  const [networkName, setNetworkName] = useState(getSelectedNetwork().name);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState("");
   const [tone, setTone] = useState<"idle" | "success" | "error">("idle");
@@ -27,31 +27,25 @@ export default function BalanceCard() {
   useEffect(() => {
     let active = true;
 
-    async function syncNetworkName() {
-      try {
-        const nextName = await getConnectedNetworkName();
-
-        if (active) {
-          setNetworkName(nextName);
-        }
-      } catch {
-        if (active) {
-          setNetworkName("Connected network");
-        }
+    function syncNetworkName() {
+      if (active) {
+        setNetworkName(getSelectedNetwork().name);
       }
     }
 
-    void syncNetworkName();
+    syncNetworkName();
 
     const handleChainChanged = () => {
-      void syncNetworkName();
+      syncNetworkName();
     };
 
     window.ethereum?.on?.("chainChanged", handleChainChanged);
+    window.addEventListener("zpay:network", handleChainChanged as EventListener);
 
     return () => {
       active = false;
       window.ethereum?.removeListener?.("chainChanged", handleChainChanged);
+      window.removeEventListener("zpay:network", handleChainChanged as EventListener);
     };
   }, []);
 
