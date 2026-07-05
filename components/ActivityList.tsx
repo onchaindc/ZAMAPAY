@@ -30,7 +30,7 @@ function ActivityPreview({ item, onOpen }: { item: VaultEventItem; onOpen: () =>
               <p className="text-base font-black text-white">{item.title}</p>
               <span className={`activity-status-badge ${getStatusTone(item.status)}`}>{item.status}</span>
             </div>
-            <p className="mt-1 text-sm text-zinc-400">Counterparty: {item.counterparty}</p>
+            <p className="activity-preview-subcopy text-sm text-zinc-400">Counterparty: {item.counterparty}</p>
           </div>
         </div>
 
@@ -143,8 +143,8 @@ export default function ActivityList() {
 
   return (
     <>
-      <section className="glass rounded-xl p-4 md:flex md:min-h-0 md:flex-col md:p-5">
-        <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+      <section className="glass rounded-xl p-4 md:flex md:min-h-0 md:flex-col md:p-4">
+        <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-zama-soft md:text-sm">Recent Activity</p>
             <h2 className="mt-2 text-xl font-black text-white md:text-2xl">Vault event history</h2>
