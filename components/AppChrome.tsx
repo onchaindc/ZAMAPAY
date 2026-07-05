@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import MobileBottomNav from "@/components/MobileBottomNav";
@@ -14,14 +14,16 @@ export default function AppChrome({ children }: AppChromeProps) {
   const pathname = usePathname();
   const router = useRouter();
   const landing = pathname === "/";
+  const checkedInitialReload = useRef(false);
 
   useEffect(() => {
-    if (pathname === "/") {
+    if (checkedInitialReload.current) {
       return;
     }
+    checkedInitialReload.current = true;
 
     const navigationEntry = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined;
-    if (navigationEntry?.type === "reload") {
+    if (pathname !== "/" && navigationEntry?.type === "reload") {
       router.replace("/");
     }
   }, [pathname, router]);

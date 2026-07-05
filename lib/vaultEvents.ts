@@ -1,7 +1,6 @@
 import { BrowserProvider, Contract, EventLog, JsonRpcProvider, formatEther } from "ethers";
 import { VAULT_ABI } from "@/lib/abi";
-import { NETWORKS } from "@/lib/constants";
-import { isConfiguredContractAddress, truncateAddress } from "@/lib/contract";
+import { isConfiguredContractAddress, getSelectedNetwork, truncateAddress } from "@/lib/contract";
 import { publicDecryptHandle } from "@/lib/fhevm";
 
 export const VAULT_ACTIVITY_EVENT = "zpay:activity";
@@ -42,8 +41,8 @@ type RawVaultEvent = {
   requestId?: string;
 };
 
-const SEPOLIA_NETWORK = NETWORKS.sepolia;
-const SEPOLIA_EXPLORER = `${SEPOLIA_NETWORK.blockExplorerUrls[0]}/tx/`;
+const DEPLOYMENT_BLOCK_CACHE = new Map<string, number>();
+const LOG_CHUNK_SIZE = 20_000;
 
 function isEventLog(log: unknown): log is EventLog {
   return typeof log === "object" && log !== null && "args" in log;
@@ -78,6 +77,59 @@ export function notifyVaultActivityChanged() {
   window.dispatchEvent(new CustomEvent(VAULT_ACTIVITY_EVENT));
 }
 
+function isAddressMatch(candidate: string, expected: string) {
+  return candidate.toLowerCase() === expected.toLowerCase();
+}
+
+async function findContractDeploymentBlock(provider: JsonRpcProvider, contractAddress: string) {
+  const cacheKey = `${provider._getConnection().url}:${contractAddress.toLowerCase()}`;
+  const cached = DEPLOYMENT_BLOCK_CACHE.get(cacheKey);
+  if (cached !== undefined) {
+    return cached;
+  }
+
+  const latestBlock = await provider.getBlockNumber();
+  const latestCode = await provider.getCode(contractAddress, latestBlock);
+  if (!latestCode || latestCode === "0x") {
+    DEPLOYMENT_BLOCK_CACHE.set(cacheKey, latestBlock);
+    return latestBlock;
+  }
+
+  let low = 0;
+  let high = latestBlock;
+
+  while (low < high) {
+    const mid = Math.floor((low + high) / 2);
+    const code = await provider.getCode(contractAddress, mid);
+
+    if (code && code !== "0x") {
+      high = mid;
+    } else {
+      low = mid + 1;
+    }
+  }
+
+  DEPLOYMENT_BLOCK_CACHE.set(cacheKey, low);
+  return low;
+}
+
+async function queryLogsInChunks(
+  contract: Contract,
+  filter: ReturnType<Contract["filters"]["Shielded"]>,
+  fromBlock: number,
+  toBlock: number
+) {
+  const logs: EventLog[] = [];
+
+  for (let start = fromBlock; start <= toBlock; start += LOG_CHUNK_SIZE) {
+    const end = Math.min(start + LOG_CHUNK_SIZE - 1, toBlock);
+    const chunkLogs = (await contract.queryFilter(filter, start, end)).filter(isEventLog);
+    logs.push(...chunkLogs);
+  }
+
+  return logs;
+}
+
 function deriveStatus(event: RawVaultEvent, completedUnshieldUsers: Set<string>) {
   if (event.variant === "unshield-requested" && completedUnshieldUsers.has(event.sender.toLowerCase())) {
     return "Completed";
@@ -105,7 +157,8 @@ export async function loadVaultEventsForConnectedUser(): Promise<VaultEventItem[
     return [];
   }
 
-  const contractAddress = SEPOLIA_NETWORK.contractAddress;
+  const selectedNetwork = getSelectedNetwork();
+  const contractAddress = selectedNetwork.contractAddress;
   if (!isConfiguredContractAddress(contractAddress)) {
     return [];
   }
@@ -113,15 +166,22 @@ export async function loadVaultEventsForConnectedUser(): Promise<VaultEventItem[
   const walletProvider = new BrowserProvider(window.ethereum);
   await walletProvider.send("eth_accounts", []);
 
-  const provider = new JsonRpcProvider(SEPOLIA_NETWORK.rpcUrl);
+  const provider = new JsonRpcProvider(selectedNetwork.rpcUrl);
   const contract = new Contract(contractAddress, VAULT_ABI, provider);
-  const [shieldedLogs, sentLogs, receivedLogs, unshieldRequestedLogs, unshieldedLogs] = await Promise.all([
-    contract.queryFilter(contract.filters.Shielded(userAddress)),
-    contract.queryFilter(contract.filters.Transferred(userAddress, null)),
-    contract.queryFilter(contract.filters.Transferred(null, userAddress)),
-    contract.queryFilter(contract.filters.UnshieldRequested(null, userAddress)),
-    contract.queryFilter(contract.filters.Unshielded(userAddress))
+  const latestBlock = await provider.getBlockNumber();
+  const deploymentBlock = await findContractDeploymentBlock(provider, contractAddress);
+  const [allShieldedLogs, allTransferredLogs, allUnshieldRequestedLogs, allUnshieldedLogs] = await Promise.all([
+    queryLogsInChunks(contract, contract.filters.Shielded(), deploymentBlock, latestBlock),
+    queryLogsInChunks(contract, contract.filters.Transferred(), deploymentBlock, latestBlock),
+    queryLogsInChunks(contract, contract.filters.UnshieldRequested(), deploymentBlock, latestBlock),
+    queryLogsInChunks(contract, contract.filters.Unshielded(), deploymentBlock, latestBlock)
   ]);
+
+  const shieldedLogs = allShieldedLogs.filter((log) => isAddressMatch(String(log.args.user), userAddress));
+  const sentLogs = allTransferredLogs.filter((log) => isAddressMatch(String(log.args.from), userAddress));
+  const receivedLogs = allTransferredLogs.filter((log) => isAddressMatch(String(log.args.to), userAddress));
+  const unshieldRequestedLogs = allUnshieldRequestedLogs.filter((log) => isAddressMatch(String(log.args.user), userAddress));
+  const unshieldedLogs = allUnshieldedLogs.filter((log) => isAddressMatch(String(log.args.user), userAddress));
 
   const timestampByBlock = new Map<number, number>();
   const allLogs = [...shieldedLogs, ...sentLogs, ...receivedLogs, ...unshieldRequestedLogs, ...unshieldedLogs];
@@ -275,8 +335,8 @@ export async function loadVaultEventsForConnectedUser(): Promise<VaultEventItem[
       txHash: event.txHash,
       status,
       blockNumber: event.blockNumber,
-      networkName: SEPOLIA_NETWORK.name,
-      explorerUrl: `${SEPOLIA_EXPLORER}${event.txHash}`,
+      networkName: selectedNetwork.name,
+      explorerUrl: `${selectedNetwork.blockExplorerUrls[0]}/tx/${event.txHash}`,
       requestId: event.requestId
     };
   });
@@ -292,19 +352,19 @@ export async function subscribeToVaultEventsForConnectedUser(onChange: () => voi
     return () => undefined;
   }
 
-  const contractAddress = SEPOLIA_NETWORK.contractAddress;
+  const selectedNetwork = getSelectedNetwork();
+  const contractAddress = selectedNetwork.contractAddress;
   if (!isConfiguredContractAddress(contractAddress)) {
     return () => undefined;
   }
 
-  const provider = new JsonRpcProvider(SEPOLIA_NETWORK.rpcUrl);
+  const provider = new JsonRpcProvider(selectedNetwork.rpcUrl);
   const contract = new Contract(contractAddress, VAULT_ABI, provider);
   const filters = [
-    contract.filters.Shielded(userAddress),
-    contract.filters.Transferred(userAddress, null),
-    contract.filters.Transferred(null, userAddress),
-    contract.filters.UnshieldRequested(null, userAddress),
-    contract.filters.Unshielded(userAddress)
+    contract.filters.Shielded(),
+    contract.filters.Transferred(),
+    contract.filters.UnshieldRequested(),
+    contract.filters.Unshielded()
   ];
 
   for (const filter of filters) {

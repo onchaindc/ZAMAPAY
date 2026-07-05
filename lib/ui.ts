@@ -12,7 +12,7 @@ export function getFriendlyErrorMessage(
     message.includes("block range") ||
     message.includes("response size exceeded")
   ) {
-    return "";
+    return "Unable to load vault activity from the RPC.";
   }
 
   if (

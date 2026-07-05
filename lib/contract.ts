@@ -117,20 +117,11 @@ export async function getBrowserProvider() {
 
   const provider = new BrowserProvider(window.ethereum);
   const network = await provider.getNetwork();
-  const walletNetworkKey = getNetworkKeyForChainId(network.chainId);
-
-  if (walletNetworkKey) {
-    const selectedNetworkKey = getSelectedNetworkKey();
-
-    if (walletNetworkKey !== selectedNetworkKey) {
-      setSelectedNetworkKey(walletNetworkKey);
-    }
-  }
-
+  const selectedNetworkKey = getSelectedNetworkKey();
   const selectedNetwork = getSelectedNetwork();
 
   if (network.chainId !== BigInt(selectedNetwork.chainId)) {
-    await switchToNetwork(getSelectedNetworkKey());
+    await switchToNetwork(selectedNetworkKey);
   }
 
   return new BrowserProvider(window.ethereum);
@@ -161,10 +152,6 @@ export async function getConnectedNetworkName() {
   const provider = new BrowserProvider(window.ethereum);
   const network = await provider.getNetwork();
   const matchedKey = getNetworkKeyForChainId(network.chainId);
-
-  if (matchedKey) {
-    setSelectedNetworkKey(matchedKey);
-  }
 
   return matchedKey ? NETWORKS[matchedKey].name : getSelectedNetwork().name;
 }
