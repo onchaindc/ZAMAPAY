@@ -28,7 +28,7 @@ function ReceiptCard({ item }: { item: VaultEventItem }) {
   const counterparty = item.counterparty === "Vault" ? "Vault" : item.counterparty;
 
   return (
-    <article className="activity-card receipt-card">
+    <article className="activity-card receipt-card overflow-hidden">
       <div className="activity-timeline-marker" aria-hidden="true" />
 
       <div className="flex flex-col gap-5">
@@ -51,7 +51,7 @@ function ReceiptCard({ item }: { item: VaultEventItem }) {
           </a>
         </div>
 
-        <div className="grid gap-3 text-sm text-zinc-300 md:grid-cols-2">
+        <div className="grid gap-3 text-sm text-zinc-300 sm:grid-cols-2">
           <div className="activity-detail">
             <span className="activity-detail-label">Event type</span>
             <span className="font-semibold text-white">{item.title}</span>
@@ -169,7 +169,7 @@ export default function ReceiptsList() {
   }, []);
 
   return (
-    <section className="activity-surface mx-auto w-full md:flex md:min-h-0 md:flex-1 md:flex-col">
+    <section className="activity-surface mx-auto w-full md:flex md:min-h-0 md:flex-1 md:flex-col md:overflow-hidden">
       <div className="mb-6 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-zama-soft md:text-sm">Receipts</p>

@@ -51,7 +51,7 @@ export default function ReceiptsPage() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-6xl overflow-x-hidden px-4 pb-20 pt-3 md:flex md:h-[calc(100dvh-5.5rem)] md:flex-col md:overflow-hidden md:px-8 md:pb-5 md:pt-4">
+    <main className="mx-auto w-full max-w-6xl overflow-x-hidden px-4 pb-20 pt-3 md:flex md:h-[calc(100dvh-5.5rem)] md:min-h-0 md:flex-col md:overflow-hidden md:px-8 md:pb-5 md:pt-4">
       <div className="mx-auto mb-4 max-w-3xl text-center md:mb-4">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-zama-soft md:text-sm">Powered by Zama FHE</p>
@@ -64,10 +64,10 @@ export default function ReceiptsPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 md:min-h-0 md:flex-1 md:grid-cols-[minmax(0,1fr)_minmax(320px,640px)] md:items-start md:gap-4 md:overflow-hidden">
+      <div className="grid gap-4 md:min-h-0 md:flex-1 md:grid-cols-[minmax(0,1fr)_minmax(320px,640px)] md:items-stretch md:gap-4 md:overflow-hidden">
         <ReceiptsList />
 
-        <section className="activity-surface mx-auto w-full max-w-[640px] md:h-full md:overflow-y-auto">
+        <section className="activity-surface mx-auto w-full max-w-[640px] md:h-full md:min-h-0 md:overflow-y-auto">
           <div className="mb-4 text-center">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-zama-soft md:text-sm">Unshield</p>
             <h2 className="mt-2 text-xl font-black text-white md:text-2xl">Request an ETH withdrawal</h2>
