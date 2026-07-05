@@ -45,7 +45,7 @@ export default function LandingPage() {
 
         <div className="welcome-actions mt-8 flex w-full max-w-sm flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-center">
           <ConnectButton onConnected={setConnectedAddress} />
-          <Link href="/dashboard" className="secondary-button">
+          <Link href="/dashboard" className="secondary-button welcome-proceed-button">
             {connectedAddress ? "Proceed" : "Skip"}
           </Link>
         </div>

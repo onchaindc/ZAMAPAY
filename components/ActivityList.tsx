@@ -41,17 +41,10 @@ function ActivityPreview({ item, onOpen }: { item: VaultEventItem; onOpen: () =>
       </div>
 
       <div className="activity-preview-meta">
-        <div className="flex min-w-0 flex-wrap items-center gap-2">
+        <div className="activity-preview-meta-left">
           <span className="activity-hash-chip">{item.txHash.slice(0, 10)}...{item.txHash.slice(-6)}</span>
           <span>{item.networkName}</span>
         </div>
-
-        <span className="inline-flex items-center gap-2 font-semibold text-zama-soft">
-          See all
-          <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden="true">
-            <path d="m9 6 6 6-6 6-1.4-1.4 4.6-4.6-4.6-4.6L9 6Z" />
-          </svg>
-        </span>
       </div>
     </button>
   );
@@ -190,11 +183,6 @@ export default function ActivityList() {
         ) : latestActivity ? (
           <div className="grid gap-3">
             <ActivityPreview item={latestActivity} onOpen={() => setHistoryOpen(true)} />
-            {activity.length > 1 ? (
-              <p className="text-sm text-zinc-500">
-                Showing the latest event. Open the full activity view to see {activity.length - 1} more.
-              </p>
-            ) : null}
           </div>
         ) : (
           <div className="activity-empty-state px-4 py-10 text-center md:px-6">
