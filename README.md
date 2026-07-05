@@ -1,10 +1,20 @@
 # ZPAY
 
-## Project Overview
+[![Next.js](https://img.shields.io/badge/Next.js-14-black?logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-18-20232A?logo=react)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-06B6D4?logo=tailwindcss)](https://tailwindcss.com/)
+[![Zama FHEVM](https://img.shields.io/badge/Zama-FHEVM-111827)](https://www.zama.ai/)
+[![Sepolia](https://img.shields.io/badge/Network-Sepolia-8B5CF6)](https://sepolia.etherscan.io/)
+[![Vercel](https://img.shields.io/badge/Deploy-Vercel-black?logo=vercel)](https://vercel.com/)
 
-ZPAY is a confidential payments application built with Zama FHEVM. It gives users a privacy-preserving way to move value on Ethereum while keeping sensitive financial data encrypted on-chain.
+Confidential payments on Ethereum, powered by Zama FHEVM.
 
-With ZPAY, users can:
+## 🚀 Project Overview
+
+ZPAY is a confidential payments application built with Zama FHEVM. It enables private value flows on Ethereum while keeping sensitive balance and transfer data encrypted on-chain.
+
+Users can:
 
 - Shield funds into an encrypted vault
 - View confidential balances
@@ -12,24 +22,24 @@ With ZPAY, users can:
 - Request confidential withdrawals (unshield)
 - Preserve financial privacy using Fully Homomorphic Encryption
 
-## Why ZPAY
+## 🔒 Why ZPAY
 
-Traditional blockchains make balances, transfers, and transaction patterns publicly visible. That transparency is powerful for verification, but it creates a major privacy problem for payments.
+Traditional blockchains expose balances, transfers, and transaction history by default. That transparency is valuable for verification, but it is poorly suited for real-world payments where users expect financial privacy.
 
-ZPAY solves this by using Fully Homomorphic Encryption through Zama FHEVM. Instead of exposing balances and transfer amounts in plaintext, ZPAY keeps payment state encrypted on-chain while still allowing the smart contract to process confidential logic securely.
+ZPAY solves this by using Fully Homomorphic Encryption through Zama FHEVM. Instead of storing plaintext balances and amounts on-chain, ZPAY keeps payment state encrypted while still allowing the vault contract to execute confidential logic securely.
 
-## Features
+## ✨ Features
 
-- Confidential balances stored as encrypted on-chain state
-- Confidential transfers between users without revealing amounts publicly
-- Shield deposits that move ETH into the encrypted vault flow
-- Confidential withdrawal flow for unshielding funds back to clear ETH
-- Local balance decryption for user-side balance visibility
-- Event history for shield, transfer, and withdrawal activity
+- Confidential balances
+- Confidential transfers
+- Shield deposits
+- Confidential withdrawal flow
+- Local balance decryption
+- Event history
 - Responsive desktop and mobile UI
-- Sepolia deployment for live demo and testing
+- Sepolia deployment
 
-## Tech Stack
+## 🧱 Tech Stack
 
 - Next.js
 - React
@@ -42,39 +52,37 @@ ZPAY solves this by using Fully Homomorphic Encryption through Zama FHEVM. Inste
 - MetaMask
 - Vercel
 
-## Smart Contract
+## 📜 Smart Contract
 
-ZPAY is powered by a vault contract that keeps balances encrypted on-chain and exposes the core confidential payment flows:
+ZPAY uses a vault contract that processes confidential balances as encrypted on-chain state.
 
 - `shield()`  
-  Accepts value into the vault and credits encrypted user balance.
+  Accepts value into the vault and credits encrypted balance.
 
 - `transfer()`  
   Moves encrypted value between users without exposing the amount publicly.
 
 - `balanceOf()`  
-  Returns the encrypted balance handle associated with a user.
+  Returns the encrypted balance handle for a user.
 
 - `unshield()`  
-  Starts the confidential withdrawal flow for encrypted funds.
+  Initiates the confidential withdrawal flow.
 
 - `finalizeUnshield()`  
-  Verifies the decryption result and completes ETH release to the user.
+  Verifies decryption proof and completes ETH release.
 
-All balances remain encrypted on-chain throughout normal operation. Plaintext amounts are not stored in public contract state.
+Balances remain encrypted on-chain throughout normal operation.
 
-## Confidential Withdrawal Flow
+## 🔁 Confidential Withdrawal Flow
 
-ZPAY uses a structured confidential withdrawal flow:
+1. User requests withdrawal.
+2. Ciphertext becomes publicly decryptable.
+3. Zama relayer/KMS returns verified plaintext.
+4. Contract verifies proof.
+5. ETH is released.
+6. Encrypted balance is reduced.
 
-1. User requests a withdrawal with `unshield()`.
-2. The withdrawal ciphertext becomes publicly decryptable for the withdrawal process.
-3. Zama relayer/KMS returns a verified plaintext result.
-4. The contract verifies the proof attached to that plaintext.
-5. ETH is released to the user.
-6. The encrypted balance is reduced accordingly.
-
-## Architecture
+## 🏗️ Architecture
 
 ```text
 User
@@ -92,6 +100,38 @@ Zama Relayer/KMS
 Verified Decryption Callback
 ```
 
-## Hackathon Submission Notes
+## 💻 Local Development
 
-ZPAY is designed as a practical showcase of confidential payments on Ethereum using Zama FHEVM. The project focuses on proving that privacy-preserving balances, transfers, and withdrawals can be delivered through a familiar wallet-based UX while keeping sensitive financial data encrypted by default.
+Frontend app in this repository:
+
+```bash
+npm install
+npm run dev
+```
+
+Smart contract workflow used for the hackathon build:
+
+```bash
+npm run compile
+npm run deploy:sepolia
+npm run test
+```
+
+Note: this repository currently contains the ZPAY frontend package. The contract workflow commands above belong to the Solidity/Hardhat portion of the project and should be run from that workspace when present.
+
+## 🌍 Deployment
+
+- Frontend deployed on Vercel
+- Smart contract deployed on Sepolia
+- Confidential execution powered by Zama FHEVM
+
+## 🧹 Repository Cleanup
+
+- Removed leftover Zamapay branding in favor of ZPAY
+- Removed template-style README wording and boilerplate copy
+- Removed obsolete logo references and aligned branding assets
+- Preserved existing functionality while updating presentation and documentation
+
+## 🏁 Hackathon Submission Summary
+
+ZPAY is a practical showcase of confidential payments on Ethereum. It demonstrates how users can shield value, manage encrypted balances, transfer funds privately, and unshield assets through a wallet-first experience powered by Zama FHEVM.
